@@ -2772,6 +2772,7 @@ MonoBehaviour:
   presetButtonPrefab: {fileID: 8339202138691241370, guid: 4049ffa48f07240d4ad2cbbf17260ca2,
     type: 3}
   loadingWarningObject: {fileID: 30891542}
+  loadingWarningText: {fileID: 1175181082}
 --- !u!1 &1663656764
 GameObject:
   m_ObjectHideFlags: 0

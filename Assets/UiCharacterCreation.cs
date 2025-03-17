@@ -14,6 +14,7 @@ public class UiCharacterCreation : MonoBehaviour
     [SerializeField] private GameObject presetButtonsContainer; // Assign this in the inspector
     [SerializeField] private GameObject presetButtonPrefab; // Assign preset button prefab in inspector
     [SerializeField] private GameObject loadingWarningObject; // Assign this in the inspector
+    [SerializeField] private TextMeshProUGUI loadingWarningText; // Assign this in the inspector
     private Coroutine loadingWarningCoroutine;
     private bool isPopulatingPresets = false;
 
@@ -29,7 +30,8 @@ public class UiCharacterCreation : MonoBehaviour
         if (presetButtonsContainer == null) Debug.LogError("Preset Buttons Container is not assigned in the inspector");
         if (presetButtonPrefab == null)  Debug.LogError("Preset Button Prefab is not assigned in the inspector");
         if (loadingWarningObject == null) Debug.LogError("Loading Warning Object is not assigned in the inspector");
-        
+        if (loadingWarningText == null) Debug.LogError("Loading Warning Text is not assigned in the inspector");
+
         loadingWarningObject.SetActive(false);
         
         submitButton.onClick.AddListener(OnSubmitButtonClicked);
@@ -138,12 +140,15 @@ public class UiCharacterCreation : MonoBehaviour
         // Validate inputs
         if (string.IsNullOrEmpty(usernameInput.text))
         {
-            Debug.LogError("Username cannot be empty");
+            loadingWarningText.text = "Username cannot be empty";
+            loadingWarningObject.SetActive(true);
             return;
         }
         if (string.IsNullOrEmpty(characterDescriptionInput.text)) 
         {
             Debug.LogError("Character description cannot be empty");
+            loadingWarningText.text = "Character description cannot be empty";
+            loadingWarningObject.SetActive(true);
             return;
         }
         
