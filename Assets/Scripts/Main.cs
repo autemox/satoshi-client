@@ -7,6 +7,7 @@ public class Main : MonoBehaviour
 {
     [Header("Production vs Development Variables")]
     public bool isProduction = false;
+    public bool isPortrait = false;
     private string DOMAIN_DEVELOPMENT = "http://localhost:3016"; // http
     private string DOMAIN_PRODUCTION = "https://lysle.net";
     private string PATH_DEVELOPEMENT = "";
@@ -37,17 +38,33 @@ public class Main : MonoBehaviour
             Debug.Log($"Loaded {spriteSheetFiles.Count} SpriteSheets");
             await SpriteSheetManager.instance.LoadSpriteSheets(spriteSheetFiles);
             Debug.Log("SpriteSheets loaded");
-
-            // Start the game once everything is laded
-            StartGame();
     }
 
-    private void StartGame()
+    void Update()
+    {
+        // check portrait status
+        if (Screen.width < Screen.height) isPortrait = true;
+        else isPortrait = false;
+    }
+
+    public void PlayerCharacterGeneratedSuccessfully(string spriteSheetName)
+    {
+        // Start the game
+        StartGame(spriteSheetName);
+    }
+
+    public void PlayerSelectedPreSetCharacter(string spriteSheetName)
+    {
+        // Start the game
+        StartGame(spriteSheetName);
+    }
+
+    private void StartGame(string spriteSheetName)
     {
         gameState = GameState.Playing;
         Debug.Log("Game initialized and ready to play!");
 
         // create a character
-        ObjectManager.instance.CreateObject("Player", "red-sorceress", true);
+        ObjectManager.instance.CreateObject("Player", spriteSheetName, true);
     }
 }

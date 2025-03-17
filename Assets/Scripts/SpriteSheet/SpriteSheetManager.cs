@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ public class SpriteSheetManager : MonoBehaviour
         Debug.Log($"Loaded {SpriteSheetCache.Count} SpriteSheets into cache");
     }
     
-    private async Task DownloadSpriteSheet(string filename)
+    public async Task DownloadSpriteSheet(string filename)
     {
         if (SpriteSheetCache.ContainsKey(filename))
         {
@@ -114,13 +115,22 @@ public class SpriteSheetManager : MonoBehaviour
         return sprites;
     }
     
-    // Get a specific SpriteSheet's sprite array by filename
+    // Get a specific SpriteSheet's sprite array by filename or name
     public Sprite[] GetSpriteArray(string name)
     {
+        // convert filename to name's
+        if (name.EndsWith(".png") || name.EndsWith(".jpg") || name.EndsWith(".jpeg") || name.EndsWith(".gif") || name.EndsWith(".bmp")) name = name.Substring(0, name.LastIndexOf('.'));
+
+        // check fo asset in cache
         if (SpriteSheetCache.TryGetValue(name, out SpriteSheetAsset asset))
             return asset.sprites;
             
         Debug.LogWarning($"SpriteSheet {name} not found in cache");
         return null;
+    }
+
+    public String[] GetSpriteSheetNames()
+    {
+        return new List<string>(SpriteSheetCache.Keys).ToArray();
     }
 }
