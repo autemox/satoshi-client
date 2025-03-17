@@ -13,6 +13,8 @@ public class UiCharacterCreation : MonoBehaviour
     [SerializeField] private TextMeshProUGUI buttonText;
     [SerializeField] private GameObject presetButtonsContainer; // Assign this in the inspector
     [SerializeField] private GameObject presetButtonPrefab; // Assign preset button prefab in inspector
+    [SerializeField] private GameObject loadingWarningObject; // Assign this in the inspector
+    private Coroutine loadingWarningCoroutine;
     private bool isPopulatingPresets = false;
 
     private string spriteSheetName;
@@ -20,17 +22,15 @@ public class UiCharacterCreation : MonoBehaviour
     
     void Start()
     {
-        if (usernameInput == null)
-            Debug.LogError("Username Input Field is not assigned in the inspector");
+        if (usernameInput == null) Debug.LogError("Username Input Field is not assigned in the inspector");
+        if (characterDescriptionInput == null) Debug.LogError("Character Description Input Field is not assigned in the inspector");
+        if (submitButton == null) Debug.LogError("Submit Button is not assigned in the inspector");
+        if (buttonText == null) Debug.LogError("Button Text is not assigned in the inspector");
+        if (presetButtonsContainer == null) Debug.LogError("Preset Buttons Container is not assigned in the inspector");
+        if (presetButtonPrefab == null)  Debug.LogError("Preset Button Prefab is not assigned in the inspector");
+        if (loadingWarningObject == null) Debug.LogError("Loading Warning Object is not assigned in the inspector");
         
-        if (characterDescriptionInput == null)
-            Debug.LogError("Character Description Input Field is not assigned in the inspector");
-        
-        if (submitButton == null)
-            Debug.LogError("Submit Button is not assigned in the inspector");
-        
-        if (buttonText == null)
-            Debug.LogError("Button Text is not assigned in the inspector");
+        loadingWarningObject.SetActive(false);
         
         submitButton.onClick.AddListener(OnSubmitButtonClicked);
 
@@ -150,6 +150,12 @@ public class UiCharacterCreation : MonoBehaviour
         // Update button text
         buttonText.text = "Please wait...";
         submitButton.interactable = false;
+
+        // Start the warning timer
+        if(loadingWarningCoroutine != null)
+            StopCoroutine(loadingWarningCoroutine);
+        loadingWarningCoroutine = StartCoroutine(ShowLoadingWarningAfterDelay(10f));
+        
         
         // Make API call to generate sprite sheet
         string filename = await new LoadJsonResource().GenerateSpriteSheet(characterDescriptionInput.text);
@@ -175,5 +181,15 @@ public class UiCharacterCreation : MonoBehaviour
             buttonText.text = "Failed! Try again";
             submitButton.interactable = true;
         }
+    }
+
+    private IEnumerator ShowLoadingWarningAfterDelay(float delayInSeconds)
+    {
+        yield return new WaitForSeconds(delayInSeconds);
+        
+        // Show the warning object after the delay
+        loadingWarningObject.SetActive(true);
+        
+        Debug.Log("Showing loading warning after " + delayInSeconds + " seconds");
     }
 }
