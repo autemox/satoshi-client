@@ -163,7 +163,7 @@ public class UiCharacterCreation : MonoBehaviour
         
         
         // Make API call to generate sprite sheet
-        string filename = await new LoadJsonResource().GenerateSpriteSheet(characterDescriptionInput.text);
+        string filename = await new ApiClient().GenerateSpriteSheet(characterDescriptionInput.text);
         
         if (!string.IsNullOrEmpty(filename))
         {

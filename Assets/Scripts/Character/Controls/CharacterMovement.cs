@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class CharacterMovement : CharacterAnimate
+public class CharacterMovement : AnimatedCharacter
 {
     // Movement properties
     [Header("Movement Settings")]
@@ -116,7 +116,6 @@ public class CharacterMovement : CharacterAnimate
     // Initiate or continue a jump
     public virtual void Jump()
     {
-        Debug.Log("Jumping");
         jumpPressed = true;
         if (isGrounded) velocity.y = JUMP_FORCE;
     }

@@ -1374,6 +1374,7 @@ MonoBehaviour:
   isProduction: 0
   isPortrait: 0
   vChangesCharacterAnimation: 1
+  id: 
 --- !u!4 &589844507
 Transform:
   m_ObjectHideFlags: 0
@@ -3591,7 +3592,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9997b213693ae49d5804844582c25e91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterPrefab: {fileID: 9004007857767497172, guid: d8fd3529da674494e847f01a73c52435,
+  playerPrefab: {fileID: 9004007857767497172, guid: d8fd3529da674494e847f01a73c52435,
     type: 3}
 --- !u!4 &2049333132
 Transform:

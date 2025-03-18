@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAnimate : CharacterAppearance
+public class AnimatedCharacter : SheetCharacter
 {
     // Current animation state
     [SerializeField] private CharacterAnimation currentAnimation = CharacterAnimation.StandFront;

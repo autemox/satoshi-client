@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterAppearance : MonoBehaviour
+public class SheetCharacter : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     private string currentSpriteName = "red_sorceress";

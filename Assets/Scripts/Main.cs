@@ -18,6 +18,7 @@ public class Main : MonoBehaviour
 
     [Header("Testing")]
     public bool vChangesCharacterAnimation = false;
+    public string id;
 
     // other variables
     public GameState gameState { get; private set; } = GameState.None;
@@ -27,33 +28,35 @@ public class Main : MonoBehaviour
         // singleton
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
+
+        // select a 4 digit alphanumeric id for network communication
+        id = System.Guid.NewGuid().ToString().Substring(0, 4);
     }
 
     async void Start()
     {
-            // Create and use the resource loader
+            // Use the Api to get the sprite sheet files
             gameState = GameState.Loading;
-            GameInitData gameData = await new LoadJsonResource().LoadGameInitDataAsync();
-            List<string> spriteSheetFiles = new List<string>(gameData.spriteSheetFiles);
-            Debug.Log($"Loaded {spriteSheetFiles.Count} SpriteSheets");
-            await SpriteSheetManager.instance.LoadSpriteSheets(spriteSheetFiles);
-            Debug.Log("SpriteSheets loaded");
+            string[] resultArr = await new ApiClient().LoadSpriteSheetFiles(id);
+            List<string> spriteSheetFiles = new List<string>(resultArr); // get the list of image urls
+            Debug.Log($"Loaded {spriteSheetFiles.Count} spritesheet filenames");
+            await SpriteSheetManager.instance.LoadSpriteSheets(spriteSheetFiles); // download the images
+            Debug.Log("Spritesheets downloaded");
     }
 
     void Update()
     {
-        // check portrait status
-        if (Screen.width < Screen.height) isPortrait = true;
-        else isPortrait = false;
+        // check for portrait/mobile
+        isPortrait = Screen.width < Screen.height ? true : false;
     }
 
-    public void PlayerCharacterGeneratedSuccessfully(string spriteSheetName)
+    public void PlayerCharacterGeneratedSuccessfully(string spriteSheetName) // UiCharacterCreation calls this
     {
         // Start the game
         StartGame(spriteSheetName);
     }
 
-    public void PlayerSelectedPreSetCharacter(string spriteSheetName)
+    public void PlayerSelectedPreSetCharacter(string spriteSheetName) // UiCharacterCreation calls this
     {
         // Start the game
         StartGame(spriteSheetName);

@@ -7,8 +7,7 @@ public class ObjectManager : MonoBehaviour
     public static ObjectManager instance { get; private set; }
 
     [Header("Required Prefabs")]
-    [SerializeField] private GameObject characterPrefab; // Assign this in inspector
-    
+    [SerializeField] private GameObject playerPrefab; // assigned in inspector
     public Dictionary<string, GameObject> objects { get; private set; } = new Dictionary<string, GameObject>();
     
     void Awake()
@@ -17,25 +16,23 @@ public class ObjectManager : MonoBehaviour
         if (instance != null && instance != this) { Destroy(gameObject); return; }
         instance = this;
 
-        if(characterPrefab == null) Debug.LogError("Character prefab not assigned in ObjectManager!");
+        if(playerPrefab == null) Debug.LogError("Player prefab not assigned in ObjectManager!");
     }
     
     public GameObject CreateObject(string name, string spriteName, bool isPlayer)
     {
         // Instantiate the character prefab
-        GameObject newObject = Instantiate(characterPrefab);
+        GameObject newObject = Instantiate(isPlayer ? playerPrefab : null);
         newObject.name = name;
 
-        // place character center screen
+        // choose character location
         newObject.transform.position = new Vector3(0, 0, 0);
         
-        // Get or add required components
-        CharacterAppearance appearance = newObject.GetComponent<CharacterAppearance>();
-        appearance.SetSprite(spriteName);
+        // Set the characters appearance
+        newObject.GetComponent<SheetCharacter>().SetSprite(spriteName);
 
-        // Set tag based on player or NPC
-        if (isPlayer) newObject.tag = "Player";
-        else newObject.tag = "NPC";
+        // Set tag
+        newObject.tag = isPlayer ? "Player" : "NPC";
         
         // Add to active objects dictionary
         objects[name] = newObject;
