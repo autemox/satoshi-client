@@ -16,7 +16,11 @@ public class CharacterAnimate : CharacterAppearance
         { CharacterAnimation.StandBack, new int[] { 1 } },
         { CharacterAnimation.StandRight, new int[] { 5 } },
         { CharacterAnimation.StandLeft, new int[] { 13 } },
-        { CharacterAnimation.StandFront, new int[] { 9 } }
+        { CharacterAnimation.StandFront, new int[] { 9 } },
+        { CharacterAnimation.FallBack, new int[] { 2 } },
+        { CharacterAnimation.FallRight, new int[] { 6 } },
+        { CharacterAnimation.FallLeft, new int[] { 14 } },
+        { CharacterAnimation.FallFront, new int[] { 10 } }
     };
     
     // Animation properties
@@ -108,25 +112,33 @@ public class CharacterAnimate : CharacterAppearance
         animationEnabled = enabled;
     }
     
-    // Helper methods for common state changes
     public void StandInDirection(Vector2 direction)
     {
-        // Convert direction to the closest cardinal direction
+        // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            // Horizontal movement dominant
-            if (direction.x > 0)
-                SetAnimation(CharacterAnimation.StandRight);
-            else
-                SetAnimation(CharacterAnimation.StandLeft);
+            if (direction.x > 0) SetAnimation(CharacterAnimation.StandRight);
+            else SetAnimation(CharacterAnimation.StandLeft);
         }
         else
         {
-            // Vertical movement dominant
-            if (direction.y > 0)
-                SetAnimation(CharacterAnimation.StandBack);
-            else
-                SetAnimation(CharacterAnimation.StandFront);
+            if (direction.y > 0) SetAnimation(CharacterAnimation.StandBack);
+            else SetAnimation(CharacterAnimation.StandFront);
+        }
+    }
+
+    public void FallInDirection(Vector2 direction)
+    {
+        // Determine closest cardinal direction
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) 
+        {
+            if (direction.x > 0) SetAnimation(CharacterAnimation.FallRight);
+            else SetAnimation(CharacterAnimation.FallLeft);
+        }
+        else
+        {
+            if (direction.y > 0) SetAnimation(CharacterAnimation.FallBack);
+            else SetAnimation(CharacterAnimation.FallFront);
         }
     }
     

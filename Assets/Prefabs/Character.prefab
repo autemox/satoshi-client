@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5303435072216550668}
   - component: {fileID: 2969654804795534752}
-  - component: {fileID: 3416624790551514108}
   - component: {fileID: 430627895457454881}
   - component: {fileID: -5625879288621732216}
   - component: {fileID: 5213180239727464224}
+  - component: {fileID: 3283610324876660537}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -88,29 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!136 &3416624790551514108
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9004007857767497172}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &430627895457454881
 CharacterController:
   m_ObjectHideFlags: 0
@@ -130,8 +107,8 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
+  m_Height: 0.4
+  m_Radius: 0.1
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -183,7 +160,24 @@ MonoBehaviour:
   currentAnimation: 0
   frameRate: 6
   animationEnabled: 1
-  moveSpeed: 5
-  rotationSpeed: 10
-  jumpForce: 5
-  gravity: 9.8
+  MOVE_SPEED: 5
+  ROTATION_SPEED: 10
+  JUMP_FORCE: 5
+  GRAVITY: 20
+--- !u!114 &3283610324876660537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004007857767497172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 894615632975648e39694c23d35281e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadowOffset: 0.01
+  shadowSize: 10
+  shadowShrinkWithHeight: 0.5
+  maxHeightEffect: 5
+  shadowAlpha: 0.85

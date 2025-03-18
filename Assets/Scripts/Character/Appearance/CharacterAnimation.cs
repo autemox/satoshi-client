@@ -7,5 +7,9 @@ public enum CharacterAnimation
     WalkFront,
     WalkBack,
     WalkLeft,
-    WalkRight
+    WalkRight,
+    FallFront,
+    FallBack,
+    FallLeft,
+    FallRight
 }

@@ -7,15 +7,16 @@ public class CharacterMovement : CharacterAnimate
 {
     // Movement properties
     [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float gravity = 20f;
+    [SerializeField] private float MOVE_SPEED = 5f;
+    [SerializeField] private float ROTATION_SPEED = 10f;
+    [SerializeField] protected float JUMP_FORCE = 5f;
+    [SerializeField] private float GRAVITY = 20f;
     
     // Movement state
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
-    private bool isGrounded = false;
+    protected bool isGrounded = false;
+    protected bool jumpPressed = false;
     private Vector2 lastMovementDirection = Vector2.down; 
 
     
@@ -33,17 +34,49 @@ public class CharacterMovement : CharacterAnimate
         characterController.radius = 0.08f;
     }
     
+    protected void MoveCharacter()
+    {
+        // Calculate movement vector (horizontal only)
+        Vector3 horizontalMovement = moveDirection * MOVE_SPEED * Time.fixedDeltaTime;
+        
+        // Combine with vertical velocity for complete movement
+        Vector3 finalMovement = new Vector3(horizontalMovement.x, velocity.y * Time.fixedDeltaTime, horizontalMovement.z);
+        
+        // Apply movement (includes both horizontal and vertical)
+        characterController.Move(finalMovement);
+        
+        // Adjust rotation to face movement direction
+        if (moveDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ROTATION_SPEED * Time.fixedDeltaTime);
+        }
+    }
+
+    // Modify HandleGravity to not move the character
+    protected void HandleGravity()
+    {   
+        // Apply gravity when not grounded
+        if (isGrounded) velocity.y = -0.5f; // keep character grounded
+        else velocity.y -= GRAVITY * Time.fixedDeltaTime; // full gravity
+    }
+
+    // Modify FixedUpdate to ensure MoveCharacter is always called
     protected virtual void FixedUpdate()
     {
+        // Check if character is grounded
+        isGrounded = characterController.isGrounded;
+
         // Handle gravity and ground detection
-        HandleGravity();
+        if(!jumpPressed) HandleGravity();
         
-        // Apply movement
+        // Apply movement (always, not just when horizontal movement exists)
+        MoveCharacter();
+        
+        // Animation logic stays the same
         if (moveDirection.magnitude > 0.1f)
         {
             // Character is moving
-            MoveCharacter();
-            
             // Set walking animation based on movement direction
             Vector2 moveDir2D = new Vector2(moveDirection.x, moveDirection.z);
             
@@ -60,49 +93,11 @@ public class CharacterMovement : CharacterAnimate
                 // Use the stored last movement direction instead of transform.forward
                 StandInDirection(lastMovementDirection);
             }
-        }
-    }
-    
-    protected void HandleGravity()
-    {
-        // Check if character is grounded
-        isGrounded = characterController.isGrounded;
-        
-        // Debug ground detection
-        Debug.Log($"Grounded: {isGrounded}, Position Y: {transform.position.y}");
-        
-        // Apply gravity when not grounded
-        if (isGrounded)
-        {
-            velocity.y = -0.5f; // Small negative value to keep character grounded
-        }
-        else
-        {
-            // Increase gravity value if needed
-            velocity.y -= gravity * Time.fixedDeltaTime;
-            
-            // Make sure gravity has enough effect
-            Debug.Log($"Applying gravity, current velocity.y: {velocity.y}");
-        }
-        
-        // Apply velocity
-        characterController.Move(velocity * Time.fixedDeltaTime);
-    }
-    
-    // Move the character based on moveDirection
-    protected void MoveCharacter()
-    {
-        // Calculate movement vector
-        Vector3 movement = moveDirection * moveSpeed * Time.fixedDeltaTime;
-        
-        // Apply movement
-        characterController.Move(movement);
-        
-        // Adjust rotation to face movement direction
-        if (moveDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            else
+            {
+                // Character is falling or jumping
+                FallInDirection(lastMovementDirection);
+            }
         }
     }
     
@@ -118,13 +113,12 @@ public class CharacterMovement : CharacterAnimate
         moveDirection = horizontalDir;
     }
     
-    // Initiate a jump (to be called by derived classes)
+    // Initiate or continue a jump
     public virtual void Jump()
     {
-        if (isGrounded)
-        {
-            velocity.y = jumpForce;
-        }
+        Debug.Log("Jumping");
+        jumpPressed = true;
+        if (isGrounded) velocity.y = JUMP_FORCE;
     }
     
     // Stop all movement
@@ -142,7 +136,7 @@ public class CharacterMovement : CharacterAnimate
     // Get current movement speed
     public float GetCurrentSpeed()
     {
-        return moveDirection.magnitude * moveSpeed;
+        return moveDirection.magnitude * MOVE_SPEED;
     }
 
     protected override void Update()

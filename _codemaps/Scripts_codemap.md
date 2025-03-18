@@ -15,17 +15,25 @@ The table of contents below is for navigational convenience and reflects this do
   - [Repo File Tree](#repo-file-tree)
   - [Repo File Contents](#repo-file-contents)
     - [Character.meta](#charactermeta)
-    - [Character/CharacterAnimate.cs](#charactercharacteranimatecs)
-    - [Character/CharacterAnimate.cs.meta](#charactercharacteranimatecsmeta)
-    - [Character/CharacterAnimation.cs](#charactercharacteranimationcs)
-    - [Character/CharacterAnimation.cs.meta](#charactercharacteranimationcsmeta)
-    - [Character/CharacterAppearance.cs](#charactercharacterappearancecs)
-    - [Character/CharacterAppearance.cs.meta](#charactercharacterappearancecsmeta)
+    - [Character/Appearance.meta](#characterappearancemeta)
+    - [Character/Appearance/CharacterAnimate.cs](#characterappearancecharacteranimatecs)
+    - [Character/Appearance/CharacterAnimate.cs.meta](#characterappearancecharacteranimatecsmeta)
+    - [Character/Appearance/CharacterAnimation.cs](#characterappearancecharacteranimationcs)
+    - [Character/Appearance/CharacterAnimation.cs.meta](#characterappearancecharacteranimationcsmeta)
+    - [Character/Appearance/CharacterAppearance.cs](#characterappearancecharacterappearancecs)
+    - [Character/Appearance/CharacterAppearance.cs.meta](#characterappearancecharacterappearancecsmeta)
     - [Character/Controls.meta](#charactercontrolsmeta)
     - [Character/Controls/CharacterMovement.cs](#charactercontrolscharactermovementcs)
     - [Character/Controls/CharacterMovement.cs.meta](#charactercontrolscharactermovementcsmeta)
     - [Character/Controls/Player.cs](#charactercontrolsplayercs)
     - [Character/Controls/Player.cs.meta](#charactercontrolsplayercsmeta)
+    - [Comm.meta](#commmeta)
+    - [Comm/GameInitData.cs](#commgameinitdatacs)
+    - [Comm/GameInitData.cs.meta](#commgameinitdatacsmeta)
+    - [Comm/LoadJsonResource.cs](#commloadjsonresourcecs)
+    - [Comm/LoadJsonResource.cs.meta](#commloadjsonresourcecsmeta)
+    - [GameState.cs](#gamestatecs)
+    - [GameState.cs.meta](#gamestatecsmeta)
     - [Main.cs](#maincs)
     - [Main.cs.meta](#maincsmeta)
     - [ObjectManager.cs](#objectmanagercs)
@@ -35,13 +43,9 @@ The table of contents below is for navigational convenience and reflects this do
     - [SpriteSheet/SpriteSheetAsset.cs.meta](#spritesheetspritesheetassetcsmeta)
     - [SpriteSheet/SpriteSheetManager.cs](#spritesheetspritesheetmanagercs)
     - [SpriteSheet/SpriteSheetManager.cs.meta](#spritesheetspritesheetmanagercsmeta)
-    - [Start.meta](#startmeta)
-    - [Start/GameInitData.cs](#startgameinitdatacs)
-    - [Start/GameInitData.cs.meta](#startgameinitdatacsmeta)
-    - [Start/GameState.cs](#startgamestatecs)
-    - [Start/GameState.cs.meta](#startgamestatecsmeta)
-    - [Start/LoadJsonResource.cs](#startloadjsonresourcecs)
-    - [Start/LoadJsonResource.cs.meta](#startloadjsonresourcecsmeta)
+    - [Ui.meta](#uimeta)
+    - [Ui/UiCharacterCreation.cs](#uiuicharactercreationcs)
+    - [Ui/UiCharacterCreation.cs.meta](#uiuicharactercreationcsmeta)
 
 <!-- /TOC -->
 
@@ -52,39 +56,45 @@ This file tree represents the actual structure of the repository. It's crucial f
 ```tree
 .
 ├── Character/
+│   ├── Appearance/
+│   │   ├── CharacterAnimate.cs
+│   │   ├── CharacterAnimate.cs.meta
+│   │   ├── CharacterAnimation.cs
+│   │   ├── CharacterAnimation.cs.meta
+│   │   ├── CharacterAppearance.cs
+│   │   └── CharacterAppearance.cs.meta
 │   ├── Controls/
 │   │   ├── CharacterMovement.cs
 │   │   ├── CharacterMovement.cs.meta
 │   │   ├── Player.cs
 │   │   └── Player.cs.meta
-│   ├── CharacterAnimate.cs
-│   ├── CharacterAnimate.cs.meta
-│   ├── CharacterAnimation.cs
-│   ├── CharacterAnimation.cs.meta
-│   ├── CharacterAppearance.cs
-│   ├── CharacterAppearance.cs.meta
+│   ├── Appearance.meta
 │   └── Controls.meta
+├── Comm/
+│   ├── GameInitData.cs
+│   ├── GameInitData.cs.meta
+│   ├── LoadJsonResource.cs
+│   └── LoadJsonResource.cs.meta
 ├── SpriteSheet/
 │   ├── SpriteSheetAsset.cs
 │   ├── SpriteSheetAsset.cs.meta
 │   ├── SpriteSheetManager.cs
 │   └── SpriteSheetManager.cs.meta
-├── Start/
-│   ├── GameInitData.cs
-│   ├── GameInitData.cs.meta
-│   ├── GameState.cs
-│   ├── GameState.cs.meta
-│   ├── LoadJsonResource.cs
-│   └── LoadJsonResource.cs.meta
+├── Ui/
+│   ├── UiCharacterCreation.cs
+│   └── UiCharacterCreation.cs.meta
 ├── Character.meta
+├── Comm.meta
+├── GameState.cs
+├── GameState.cs.meta
 ├── Main.cs
 ├── Main.cs.meta
 ├── ObjectManager.cs
 ├── ObjectManager.cs.meta
 ├── SpriteSheet.meta
-└── Start.meta
+└── Ui.meta
 
-4 directories, 28 files
+6 directories, 32 files
 ```
 
 ## Repo File Contents
@@ -150,6 +160,17 @@ public class ObjectManager : MonoBehaviour
 }
 ```
 
+### GameState.cs
+
+```csharp
+public enum GameState
+{
+    None,       // Initial state
+    Loading,    // Loading resources/assets
+    Playing,    // Gameplay active
+}
+```
+
 ### Main.cs.meta
 
 ```txt
@@ -166,11 +187,11 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Start.meta
+### Ui.meta
 
 ```txt
 fileFormatVersion: 2
-guid: d0d672151b33d476e9fc55859490ac43
+guid: 769a458c98e7942df90471a6eca5f210
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
@@ -217,6 +238,7 @@ public class Main : MonoBehaviour
 {
     [Header("Production vs Development Variables")]
     public bool isProduction = false;
+    public bool isPortrait = false;
     private string DOMAIN_DEVELOPMENT = "http://localhost:3016"; // http
     private string DOMAIN_PRODUCTION = "https://lysle.net";
     private string PATH_DEVELOPEMENT = "";
@@ -247,20 +269,65 @@ public class Main : MonoBehaviour
             Debug.Log($"Loaded {spriteSheetFiles.Count} SpriteSheets");
             await SpriteSheetManager.instance.LoadSpriteSheets(spriteSheetFiles);
             Debug.Log("SpriteSheets loaded");
-
-            // Start the game once everything is laded
-            StartGame();
     }
 
-    private void StartGame()
+    void Update()
+    {
+        // check portrait status
+        if (Screen.width < Screen.height) isPortrait = true;
+        else isPortrait = false;
+    }
+
+    public void PlayerCharacterGeneratedSuccessfully(string spriteSheetName)
+    {
+        // Start the game
+        StartGame(spriteSheetName);
+    }
+
+    public void PlayerSelectedPreSetCharacter(string spriteSheetName)
+    {
+        // Start the game
+        StartGame(spriteSheetName);
+    }
+
+    private void StartGame(string spriteSheetName)
     {
         gameState = GameState.Playing;
         Debug.Log("Game initialized and ready to play!");
 
         // create a character
-        ObjectManager.instance.CreateObject("Player", "red-sorceress", true);
+        ObjectManager.instance.CreateObject("Player", spriteSheetName, true);
     }
 }
+```
+
+### Comm.meta
+
+```txt
+fileFormatVersion: 2
+guid: d0d672151b33d476e9fc55859490ac43
+folderAsset: yes
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant:
+```
+
+### GameState.cs.meta
+
+```txt
+fileFormatVersion: 2
+guid: df90db321c5314bb1ab24292cafb3c9b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant:
 ```
 
 ### ObjectManager.cs.meta
@@ -279,7 +346,254 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Character/CharacterAnimate.cs
+### Ui/UiCharacterCreation.cs.meta
+
+```txt
+fileFormatVersion: 2
+guid: a8f095b6d6c7a4e0d91c9ad2b78bb5fd
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant:
+```
+
+### Ui/UiCharacterCreation.cs
+
+```csharp
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+using System.Threading.Tasks;
+
+public class UiCharacterCreation : MonoBehaviour
+{
+    [SerializeField] private TMP_InputField usernameInput;
+    [SerializeField] private TMP_InputField characterDescriptionInput;
+    [SerializeField] private Button submitButton;
+    [SerializeField] private TextMeshProUGUI buttonText;
+    [SerializeField] private GameObject presetButtonsContainer; // Assign this in the inspector
+    [SerializeField] private GameObject presetButtonPrefab; // Assign preset button prefab in inspector
+    [SerializeField] private GameObject loadingWarningObject; // Assign this in the inspector
+    [SerializeField] private TextMeshProUGUI loadingWarningText; // Assign this in the inspector
+    private Coroutine loadingWarningCoroutine;
+    private bool isPopulatingPresets = false;
+
+    private string spriteSheetName;
+    private bool isWaitingForSpriteSheet = false;
+    
+    void Start()
+    {
+        if (usernameInput == null) Debug.LogError("Username Input Field is not assigned in the inspector");
+        if (characterDescriptionInput == null) Debug.LogError("Character Description Input Field is not assigned in the inspector");
+        if (submitButton == null) Debug.LogError("Submit Button is not assigned in the inspector");
+        if (buttonText == null) Debug.LogError("Button Text is not assigned in the inspector");
+        if (presetButtonsContainer == null) Debug.LogError("Preset Buttons Container is not assigned in the inspector");
+        if (presetButtonPrefab == null)  Debug.LogError("Preset Button Prefab is not assigned in the inspector");
+        if (loadingWarningObject == null) Debug.LogError("Loading Warning Object is not assigned in the inspector");
+        if (loadingWarningText == null) Debug.LogError("Loading Warning Text is not assigned in the inspector");
+
+        loadingWarningObject.SetActive(false);
+        
+        submitButton.onClick.AddListener(OnSubmitButtonClicked);
+
+        // Start populating preset buttons
+        StartCoroutine(PopulatePresetButtons());
+    }
+    
+    void Update()
+    {
+        if (isWaitingForSpriteSheet && !string.IsNullOrEmpty(spriteSheetName))
+        {
+            var spriteArray = SpriteSheetManager.instance.GetSpriteArray(spriteSheetName);
+            if (spriteArray != null)
+            {
+                isWaitingForSpriteSheet = false;
+                gameObject.SetActive(false); // Hide character creation UI
+                Main.instance.PlayerCharacterGeneratedSuccessfully(spriteSheetName);
+            }
+        }
+        
+        // widen screen for mobile
+        if(Main.instance.isPortrait) 
+        {
+            // 98% width
+            RectTransform rt = GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(Screen.width * 0.98f, rt.sizeDelta.y);
+        }
+    }
+
+    private IEnumerator PopulatePresetButtons()
+    {
+        if (isPopulatingPresets) yield break;
+        
+        isPopulatingPresets = true;
+        
+        // Keep checking until we get sprite sheet names
+        string[] spriteSheetNames = new string[0];
+        while (spriteSheetNames.Length == 0)
+        {
+            spriteSheetNames = SpriteSheetManager.instance.GetSpriteSheetNames();
+            if (spriteSheetNames.Length == 0)
+                yield return new WaitForSeconds(0.5f);
+        }
+        
+        // Clear existing buttons
+        foreach (Transform child in presetButtonsContainer.transform)
+            if(child.name != "Header") Destroy(child.gameObject);
+        
+        // Create a button for each sprite sheet
+        for (int i = 0; i < spriteSheetNames.Length; i++)
+        {
+            string name = spriteSheetNames[i];
+            GameObject buttonObj = Instantiate(presetButtonPrefab, presetButtonsContainer.transform);
+            
+            // Find the TextMeshProUGUI component (could be on child object)
+            TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (buttonText != null)
+                buttonText.text = name;
+            
+            // Find the Button component which is on a child of the prefab
+            Button button = buttonObj.GetComponentInChildren<Button>();
+            if (button != null)
+            {
+                // Store name in local variable to avoid closure issues
+                string sheetName = name;
+                
+                // Add click handler
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => {
+                    Debug.Log($"Button clicked: {sheetName}");
+                    HandlePresetButtonClick(sheetName);
+                });
+                
+                Debug.Log($"Successfully added click listener to button for {sheetName}");
+            }
+            else
+            {
+                Debug.LogError($"Button component not found on any child of the prefab for {name}");
+            }
+        }
+        
+        isPopulatingPresets = false;
+    }
+
+    private void HandlePresetButtonClick(string spriteSheetName)
+    {
+        Debug.Log($"Handling click for {spriteSheetName}");
+        Main.instance.PlayerSelectedPreSetCharacter(spriteSheetName);
+        gameObject.SetActive(false);
+    }
+
+    private void OnPresetButtonClicked(string spriteSheetName)
+    {
+        Debug.Log($"Preset button clicked: {spriteSheetName}");
+
+        // Call to main instance with the selected preset
+        Main.instance.PlayerSelectedPreSetCharacter(spriteSheetName);
+        
+        // Hide character creation UI
+        gameObject.SetActive(false);
+    }
+    
+    private async void OnSubmitButtonClicked()
+    {
+        // Validate inputs
+        if (string.IsNullOrEmpty(usernameInput.text))
+        {
+            loadingWarningText.text = "Username cannot be empty";
+            loadingWarningObject.SetActive(true);
+            return;
+        }
+        if (string.IsNullOrEmpty(characterDescriptionInput.text)) 
+        {
+            Debug.LogError("Character description cannot be empty");
+            loadingWarningText.text = "Character description cannot be empty";
+            loadingWarningObject.SetActive(true);
+            return;
+        }
+        
+        // Update button text
+        buttonText.text = "Please wait...";
+        submitButton.interactable = false;
+
+        // Start the warning timer
+        if(loadingWarningCoroutine != null)
+            StopCoroutine(loadingWarningCoroutine);
+        loadingWarningCoroutine = StartCoroutine(ShowLoadingWarningAfterDelay(10f));
+        
+        
+        // Make API call to generate sprite sheet
+        string filename = await new LoadJsonResource().GenerateSpriteSheet(characterDescriptionInput.text);
+        
+        if (!string.IsNullOrEmpty(filename))
+        {
+            // Update button text
+            buttonText.text = "Downloading...";
+            
+            // Store sprite sheet name
+            spriteSheetName = filename;
+            
+            // Start downloading the sprite sheet
+            SpriteSheetManager.instance.DownloadSpriteSheet(spriteSheetName);
+            
+            // Start checking for sprite sheet to be loaded
+            isWaitingForSpriteSheet = true;
+        }
+        else
+        {
+            // Error handling
+            Debug.LogError("Failed to generate sprite sheet");
+            buttonText.text = "Failed! Try again";
+            submitButton.interactable = true;
+        }
+    }
+
+    private IEnumerator ShowLoadingWarningAfterDelay(float delayInSeconds)
+    {
+        yield return new WaitForSeconds(delayInSeconds);
+        
+        // Show the warning object after the delay
+        loadingWarningObject.SetActive(true);
+        
+        Debug.Log("Showing loading warning after " + delayInSeconds + " seconds");
+    }
+}
+```
+
+### Character/Appearance.meta
+
+```txt
+fileFormatVersion: 2
+guid: df9dbdce84b5340e990a53bad3a8d312
+folderAsset: yes
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant:
+```
+
+### Character/Controls.meta
+
+```txt
+fileFormatVersion: 2
+guid: 6913e144a92de4963a5c4f20ec28c5cf
+folderAsset: yes
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant:
+```
+
+### Character/Appearance/CharacterAnimate.cs
 
 ```csharp
 using System.Collections.Generic;
@@ -300,7 +614,11 @@ public class CharacterAnimate : CharacterAppearance
         { CharacterAnimation.StandBack, new int[] { 1 } },
         { CharacterAnimation.StandRight, new int[] { 5 } },
         { CharacterAnimation.StandLeft, new int[] { 13 } },
-        { CharacterAnimation.StandFront, new int[] { 9 } }
+        { CharacterAnimation.StandFront, new int[] { 9 } },
+        { CharacterAnimation.FallBack, new int[] { 2 } },
+        { CharacterAnimation.FallRight, new int[] { 6 } },
+        { CharacterAnimation.FallLeft, new int[] { 14 } },
+        { CharacterAnimation.FallFront, new int[] { 10 } }
     };
     
     // Animation properties
@@ -392,25 +710,33 @@ public class CharacterAnimate : CharacterAppearance
         animationEnabled = enabled;
     }
     
-    // Helper methods for common state changes
     public void StandInDirection(Vector2 direction)
     {
-        // Convert direction to the closest cardinal direction
+        // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            // Horizontal movement dominant
-            if (direction.x > 0)
-                SetAnimation(CharacterAnimation.StandRight);
-            else
-                SetAnimation(CharacterAnimation.StandLeft);
+            if (direction.x > 0) SetAnimation(CharacterAnimation.StandRight);
+            else SetAnimation(CharacterAnimation.StandLeft);
         }
         else
         {
-            // Vertical movement dominant
-            if (direction.y > 0)
-                SetAnimation(CharacterAnimation.StandBack);
-            else
-                SetAnimation(CharacterAnimation.StandFront);
+            if (direction.y > 0) SetAnimation(CharacterAnimation.StandBack);
+            else SetAnimation(CharacterAnimation.StandFront);
+        }
+    }
+
+    public void FallInDirection(Vector2 direction)
+    {
+        // Determine closest cardinal direction
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) 
+        {
+            if (direction.x > 0) SetAnimation(CharacterAnimation.FallRight);
+            else SetAnimation(CharacterAnimation.FallLeft);
+        }
+        else
+        {
+            if (direction.y > 0) SetAnimation(CharacterAnimation.FallBack);
+            else SetAnimation(CharacterAnimation.FallFront);
         }
     }
     
@@ -437,7 +763,7 @@ public class CharacterAnimate : CharacterAppearance
 }
 ```
 
-### Character/CharacterAnimate.cs.meta
+### Character/Appearance/CharacterAnimate.cs.meta
 
 ```txt
 fileFormatVersion: 2
@@ -453,7 +779,7 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Character/CharacterAnimation.cs
+### Character/Appearance/CharacterAnimation.cs
 
 ```csharp
 public enum CharacterAnimation
@@ -465,11 +791,15 @@ public enum CharacterAnimation
     WalkFront,
     WalkBack,
     WalkLeft,
-    WalkRight
+    WalkRight,
+    FallFront,
+    FallBack,
+    FallLeft,
+    FallRight
 }
 ```
 
-### Character/CharacterAnimation.cs.meta
+### Character/Appearance/CharacterAnimation.cs.meta
 
 ```txt
 fileFormatVersion: 2
@@ -485,7 +815,7 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Character/CharacterAppearance.cs
+### Character/Appearance/CharacterAppearance.cs
 
 ```csharp
 using System.Collections;
@@ -530,6 +860,7 @@ public class CharacterAppearance : MonoBehaviour
         if (sprites != null && sprites.Length > 0)
         {
             spriteRenderer.sprite = sprites[currentSpriteIndex];
+            transform.localScale = new Vector3(4f, 4f, 4f); // scale to normal character height in a unity game
             return true;
         }
         else
@@ -564,20 +895,7 @@ public class CharacterAppearance : MonoBehaviour
 }
 ```
 
-### Character/Controls.meta
-
-```txt
-fileFormatVersion: 2
-guid: 6913e144a92de4963a5c4f20ec28c5cf
-folderAsset: yes
-DefaultImporter:
-  externalObjects: {}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant:
-```
-
-### Character/CharacterAppearance.cs.meta
+### Character/Appearance/CharacterAppearance.cs.meta
 
 ```txt
 fileFormatVersion: 2
@@ -637,46 +955,82 @@ public class CharacterMovement : CharacterAnimate
 {
     // Movement properties
     [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private float gravity = 20f;
+    [SerializeField] private float MOVE_SPEED = 5f;
+    [SerializeField] private float ROTATION_SPEED = 10f;
+    [SerializeField] protected float JUMP_FORCE = 5f;
+    [SerializeField] private float GRAVITY = 20f;
     
     // Movement state
     private Vector3 moveDirection = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
-    private bool isGrounded = false;
+    protected bool isGrounded = false;
+    protected bool jumpPressed = false;
+    private Vector2 lastMovementDirection = Vector2.down; 
+
     
     // Components
     private CharacterController characterController;
     
     protected override void Start()
     {
-        // Get components
         characterController = GetComponent<CharacterController>();
-        
-        if (characterController == null)
-        {
-            Debug.LogError("CharacterController component required for CharacterMovement");
-            enabled = false;
-        }
+        if (characterController == null) Debug.LogError("CharacterController component required for CharacterMovement");
 
         base.Start();
+
+        characterController.height = 0.5f;
+        characterController.radius = 0.08f;
     }
     
+    protected void MoveCharacter()
+    {
+        // Calculate movement vector (horizontal only)
+        Vector3 horizontalMovement = moveDirection * MOVE_SPEED * Time.fixedDeltaTime;
+        
+        // Combine with vertical velocity for complete movement
+        Vector3 finalMovement = new Vector3(horizontalMovement.x, velocity.y * Time.fixedDeltaTime, horizontalMovement.z);
+        
+        // Apply movement (includes both horizontal and vertical)
+        characterController.Move(finalMovement);
+        
+        // Adjust rotation to face movement direction
+        if (moveDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ROTATION_SPEED * Time.fixedDeltaTime);
+        }
+    }
+
+    // Modify HandleGravity to not move the character
+    protected void HandleGravity()
+    {   
+        // Apply gravity when not grounded
+        if (isGrounded) velocity.y = -0.5f; // keep character grounded
+        else velocity.y -= GRAVITY * Time.fixedDeltaTime; // full gravity
+    }
+
+    // Modify FixedUpdate to ensure MoveCharacter is always called
     protected virtual void FixedUpdate()
     {
+        // Check if character is grounded
+        isGrounded = characterController.isGrounded;
+
         // Handle gravity and ground detection
-        HandleGravity();
+        if(!jumpPressed) HandleGravity();
         
-        // Apply movement
+        // Apply movement (always, not just when horizontal movement exists)
+        MoveCharacter();
+        
+        // Animation logic stays the same
         if (moveDirection.magnitude > 0.1f)
         {
             // Character is moving
-            MoveCharacter();
-            
             // Set walking animation based on movement direction
             Vector2 moveDir2D = new Vector2(moveDirection.x, moveDirection.z);
+            
+            // Store this as our last significant movement direction
+            lastMovementDirection = moveDir2D;
+            
             WalkInDirection(moveDir2D);
         }
         else
@@ -684,46 +1038,14 @@ public class CharacterMovement : CharacterAnimate
             // Character is standing still
             if (isGrounded)
             {
-                // Set standing animation based on last movement direction
-                Vector2 lastDir2D = new Vector2(transform.forward.x, transform.forward.z);
-                StandInDirection(lastDir2D);
+                // Use the stored last movement direction instead of transform.forward
+                StandInDirection(lastMovementDirection);
             }
-        }
-    }
-    
-    protected void HandleGravity()
-    {
-        // Check if character is grounded
-        isGrounded = characterController.isGrounded;
-        
-        // Apply gravity when not grounded
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -0.5f; // Small negative value to keep character grounded
-        }
-        else
-        {
-            velocity.y -= gravity * Time.fixedDeltaTime;
-        }
-        
-        // Apply velocity
-        characterController.Move(velocity * Time.fixedDeltaTime);
-    }
-    
-    // Move the character based on moveDirection
-    protected void MoveCharacter()
-    {
-        // Calculate movement vector
-        Vector3 movement = moveDirection * moveSpeed * Time.fixedDeltaTime;
-        
-        // Apply movement
-        characterController.Move(movement);
-        
-        // Adjust rotation to face movement direction
-        if (moveDirection != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+            else
+            {
+                // Character is falling or jumping
+                FallInDirection(lastMovementDirection);
+            }
         }
     }
     
@@ -739,13 +1061,12 @@ public class CharacterMovement : CharacterAnimate
         moveDirection = horizontalDir;
     }
     
-    // Initiate a jump (to be called by derived classes)
+    // Initiate or continue a jump
     public virtual void Jump()
     {
-        if (isGrounded)
-        {
-            velocity.y = jumpForce;
-        }
+        Debug.Log("Jumping");
+        jumpPressed = true;
+        if (isGrounded) velocity.y = JUMP_FORCE;
     }
     
     // Stop all movement
@@ -763,7 +1084,12 @@ public class CharacterMovement : CharacterAnimate
     // Get current movement speed
     public float GetCurrentSpeed()
     {
-        return moveDirection.magnitude * moveSpeed;
+        return moveDirection.magnitude * MOVE_SPEED;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
     }
 }
 ```
@@ -782,6 +1108,8 @@ public class Player : CharacterMovement
     // Input references
     private InputAction moveAction;
     private InputAction jumpAction;
+    private float MAX_JUMP_TIME = 0.2f;
+    private float jumpCounter = 0;
     
     // Camera reference for movement relative to camera
         
@@ -807,7 +1135,24 @@ public class Player : CharacterMovement
     {
         // Process input
         ProcessMoveInput();
-        ProcessJumpInput();
+
+        // Start Jumping
+        if (Input.GetButton("Jump") && isGrounded) 
+        {
+            jumpPressed = true;
+            jumpCounter = 0; // let player jump
+        }
+        else if(!Input.GetButton("Jump") && !isGrounded) 
+        {
+            jumpPressed = false; // player let go of jump key
+        }
+
+        // Continue Jumping
+        if (jumpPressed && jumpCounter < MAX_JUMP_TIME) 
+        {
+            jumpCounter += Time.fixedDeltaTime; // player is still holding jump key, allow for more jump
+            Jump(); // CharacterMovement.cs will apply force upward
+        }
         
         // Let the base class handle movement and animation
         base.FixedUpdate();
@@ -843,32 +1188,10 @@ public class Player : CharacterMovement
             StopMovement();
         }
     }
-    
-    private void ProcessJumpInput()
-    {
-        // Check for jump input
-        if (jumpAction.triggered)
-        {
-            Jump();
-        }
-    }
-    
-    // These methods can be called by Unity Input System events
-    public void OnMove(InputValue value)
-    {
-        // Optional: You can handle input here instead of in FixedUpdate
-        // Vector2 input = value.Get<Vector2>();
-    }
-    
-    public void OnJump(InputValue value)
-    {
-        // Optional: You can handle jump here
-        // if (value.isPressed) Jump();
-    }
 }
 ```
 
-### Start/GameInitData.cs.meta
+### Comm/GameInitData.cs.meta
 
 ```txt
 fileFormatVersion: 2
@@ -884,27 +1207,68 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Start/GameState.cs
-
-```csharp
-public enum GameState
-{
-    None,       // Initial state
-    Loading,    // Loading resources/assets
-    Playing,    // Gameplay active
-}
-```
-
-### Start/LoadJsonResource.cs
+### Comm/LoadJsonResource.cs
 
 ```csharp
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
+// 2 calls to http server are handled in LoadJsonResource
+// 1. GenerateSpriteSheet: POST /api/generate-spritesheet and RESPONDS SpriteSheetResponse
+// 2. LoadGameInitDataAsync: GET /api/game-init and RESPONDS GameInitData
+
+
 public class LoadJsonResource
 {
+    public async Task<string> GenerateSpriteSheet(string characterDescription)
+    {
+        string url = Main.instance.baseUrl + "/api/generate-spritesheet";
+        
+        // Create JSON payload
+        var requestData = new SpriteSheetRequest { prompt = characterDescription };
+        string jsonContent = JsonUtility.ToJson(requestData);
+        byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonContent);
+        
+        Debug.Log($"Generating sprite sheet for: {characterDescription} to url: {url}");
+        using (var request = new UnityWebRequest(url, "POST"))
+        {
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            
+            var operation = request.SendWebRequest();
+            
+            while (!operation.isDone) await Task.Yield();
+                
+            if (request.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to generate sprite sheet: {request.error}");
+                return null;
+            }
+            
+            // Parse response to get the filename
+            var responseJson = request.downloadHandler.text;
+            var response = JsonUtility.FromJson<SpriteSheetResponse>(responseJson);
+            
+            return response.filename;
+        }
+    }
+
+    [System.Serializable]
+    private class SpriteSheetRequest
+    {
+        public string prompt;
+    }
+
+    [System.Serializable]
+    private class SpriteSheetResponse
+    {
+        public string filename;
+    }
+
     public async Task<GameInitData> LoadGameInitDataAsync()
     {
         string url = Main.instance.baseUrl + "/api/game-init";
@@ -925,7 +1289,7 @@ public class LoadJsonResource
 }
 ```
 
-### Start/LoadJsonResource.cs.meta
+### Comm/LoadJsonResource.cs.meta
 
 ```txt
 fileFormatVersion: 2
@@ -941,29 +1305,13 @@ MonoImporter:
   assetBundleVariant:
 ```
 
-### Start/GameInitData.cs
+### Comm/GameInitData.cs
 
 ```csharp
 public class GameInitData
 {
     public string[] spriteSheetFiles;
 }
-```
-
-### Start/GameState.cs.meta
-
-```txt
-fileFormatVersion: 2
-guid: df90db321c5314bb1ab24292cafb3c9b
-MonoImporter:
-  externalObjects: {}
-  serializedVersion: 2
-  defaultReferences: []
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant:
 ```
 
 ### SpriteSheet/SpriteSheetAsset.cs
@@ -1030,6 +1378,7 @@ MonoImporter:
 ### SpriteSheet/SpriteSheetManager.cs
 
 ```csharp
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -1071,7 +1420,7 @@ public class SpriteSheetManager : MonoBehaviour
         Debug.Log($"Loaded {SpriteSheetCache.Count} SpriteSheets into cache");
     }
     
-    private async Task DownloadSpriteSheet(string filename)
+    public async Task DownloadSpriteSheet(string filename)
     {
         if (SpriteSheetCache.ContainsKey(filename))
         {
@@ -1146,14 +1495,23 @@ public class SpriteSheetManager : MonoBehaviour
         return sprites;
     }
     
-    // Get a specific SpriteSheet's sprite array by filename
+    // Get a specific SpriteSheet's sprite array by filename or name
     public Sprite[] GetSpriteArray(string name)
     {
+        // convert filename to name's
+        if (name.EndsWith(".png") || name.EndsWith(".jpg") || name.EndsWith(".jpeg") || name.EndsWith(".gif") || name.EndsWith(".bmp")) name = name.Substring(0, name.LastIndexOf('.'));
+
+        // check fo asset in cache
         if (SpriteSheetCache.TryGetValue(name, out SpriteSheetAsset asset))
             return asset.sprites;
             
         Debug.LogWarning($"SpriteSheet {name} not found in cache");
         return null;
+    }
+
+    public String[] GetSpriteSheetNames()
+    {
+        return new List<string>(SpriteSheetCache.Keys).ToArray();
     }
 }
 ```

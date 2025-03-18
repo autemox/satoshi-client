@@ -9,6 +9,8 @@ public class Player : CharacterMovement
     // Input references
     private InputAction moveAction;
     private InputAction jumpAction;
+    private float MAX_JUMP_TIME = 0.2f;
+    private float jumpCounter = 0;
     
     // Camera reference for movement relative to camera
         
@@ -34,7 +36,24 @@ public class Player : CharacterMovement
     {
         // Process input
         ProcessMoveInput();
-        ProcessJumpInput();
+
+        // Start Jumping
+        if (Input.GetButton("Jump") && isGrounded) 
+        {
+            jumpPressed = true;
+            jumpCounter = 0; // let player jump
+        }
+        else if(!Input.GetButton("Jump") && !isGrounded) 
+        {
+            jumpPressed = false; // player let go of jump key
+        }
+
+        // Continue Jumping
+        if (jumpPressed && jumpCounter < MAX_JUMP_TIME) 
+        {
+            jumpCounter += Time.fixedDeltaTime; // player is still holding jump key, allow for more jump
+            Jump(); // CharacterMovement.cs will apply force upward
+        }
         
         // Let the base class handle movement and animation
         base.FixedUpdate();
@@ -69,27 +88,5 @@ public class Player : CharacterMovement
             // No input, stop movement
             StopMovement();
         }
-    }
-    
-    private void ProcessJumpInput()
-    {
-        // Check for jump input
-        if (jumpAction.triggered)
-        {
-            Jump();
-        }
-    }
-    
-    // These methods can be called by Unity Input System events
-    public void OnMove(InputValue value)
-    {
-        // Optional: You can handle input here instead of in FixedUpdate
-        // Vector2 input = value.Get<Vector2>();
-    }
-    
-    public void OnJump(InputValue value)
-    {
-        // Optional: You can handle jump here
-        // if (value.isPressed) Jump();
     }
 }
