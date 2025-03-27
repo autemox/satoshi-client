@@ -9,6 +9,7 @@ public class ObjectManager : NetworkBehaviour
 
     [Header("Required Prefabs")]
     [SerializeField] private GameObject playerPrefab; // assigned in inspector
+    [SerializeField] private GameObject testPrefab; // assigned in inspector
     
     void Awake()
     {
@@ -19,6 +20,11 @@ public class ObjectManager : NetworkBehaviour
         if(playerPrefab == null) Debug.LogError("Player prefab not assigned in ObjectManager!");
     }
 
+    void Start()
+    {
+
+    }
+
     [ServerRpc]
     public void CreatePlayerServerRpc(string playerName, string spriteName, ServerRpcParams rpcParams = default)
     {
@@ -26,33 +32,33 @@ public class ObjectManager : NetworkBehaviour
         if(!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId)) Debug.LogError("Sender client not found in connected clients list.");
         if(!NetworkManager.Singleton.IsServer) Debug.LogError("CreatePlayerServerRpc called on non-server.");
 
-        // create the player
-        GameObject player = CreateObject(playerName, spriteName, EntityType.Player);
-        Debug.Log($"Player {playerName} created for client {clientId} on Server");
+        // create the player with a callback to spawn it first
+        GameObject player = CreateObject(playerName, spriteName, EntityType.Player, clientId, (obj) => {
+            
+            NetworkObject networkObject = obj.GetComponent<NetworkObject>();
+            networkObject.SpawnAsPlayerObject(clientId); // Assigns the player object to the specific client
+            Debug.Log($"Spawned player object for client {clientId}");
+        });
         
-        // spawn to clients
-        NetworkObject networkObject = player.GetComponent<NetworkObject>();
-        networkObject.SpawnAsPlayerObject(clientId); // Assigns the player object to the specific client
         Debug.Log($"Spawned player object for client {clientId}");
     }
     
-    public GameObject CreateObject(string name, string spriteName, EntityType entityType, ulong clientId=0)
+    public GameObject CreateObject(string name, string spriteName, EntityType entityType, ulong clientId=0, System.Action<GameObject> afterInstantiateAction = null)
     {
         // Instantiate the character prefab
-        GameObject newObject = Instantiate(entityType == EntityType.Player ? playerPrefab : null);
-        
-        newObject.name = name;
+        GameObject newObject = Instantiate(entityType == EntityType.Player ? playerPrefab : testPrefab);
+        newObject.name = name;                                      // Set the object name
+        newObject.transform.position = new Vector3(0, 0, 0);        // choose object location
+        newObject.tag = entityType.ToString();                      // Set tag
 
-        // choose object location
-        newObject.transform.position = new Vector3(0, 0, 0);
+        // Handle chib objects
+        ChibSprite sprite = newObject.GetComponent<ChibSprite>();
+        if(sprite != null) sprite.SetSprite(spriteName);            // Set sprite
         
-        // Set the object appearance
-        newObject.GetComponent<ChibSprite>().SetSprite(spriteName);
-
-        // Set tag
-        newObject.tag = entityType.ToString();
+        // Execute passed function before parenting, e.g. network spawning
+        afterInstantiateAction?.Invoke(newObject);
         
-        // Add to objects container
+        // Add to objects container (after network spawning)
         newObject.transform.parent = transform;
         
         return newObject;

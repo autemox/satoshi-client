@@ -104,12 +104,7 @@ public class UiCharacterCreation : MonoBehaviour
                 
                 // Add click handler
                 button.onClick.RemoveAllListeners();
-                button.onClick.AddListener(() => {
-                    Debug.Log($"Button clicked: {sheetName}");
-                    OnPresetButtonClicked(sheetName);
-                });
-                
-                Debug.Log($"Successfully added click listener to button for {sheetName}");
+                button.onClick.AddListener(() => OnPresetButtonClicked(sheetName));
             }
             else
             {
@@ -130,7 +125,6 @@ public class UiCharacterCreation : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Handling click for {spriteSheetName}");
         Main.instance.PlayerSelectedCharacter(usernameInput.text, spriteSheetName);
         gameObject.SetActive(false);
     }
@@ -146,7 +140,6 @@ public class UiCharacterCreation : MonoBehaviour
         }
         if (string.IsNullOrEmpty(characterDescriptionInput.text)) 
         {
-            Debug.LogError("Character description cannot be empty");
             loadingWarningText.text = "Character description cannot be empty";
             loadingWarningObject.SetActive(true);
             return;
@@ -187,7 +180,5 @@ public class UiCharacterCreation : MonoBehaviour
         
         // Show the warning object after the delay
         loadingWarningObject.SetActive(true);
-        
-        Debug.Log("Showing loading warning after " + delayInSeconds + " seconds");
     }
 }

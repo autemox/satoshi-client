@@ -38,8 +38,6 @@ public class ApiClient
         string url = Main.instance.baseUrl + urlPath;
         string jsonContent = JsonUtility.ToJson(requestData);
 
-        Debug.Log($"Making API request to: {url}");
-
         T response = default;
         using (var request = new UnityWebRequest(url, "POST")) 
         {

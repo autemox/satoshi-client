@@ -165,7 +165,7 @@ public class ChibAnimated : ChibSprite, IAnimated
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
             // Horizontal movement dominant
-            if (direction.x > 0)
+            if (direction.x < 0)
                 SetAnimation(Pose.WalkRight);
             else
                 SetAnimation(Pose.WalkLeft);

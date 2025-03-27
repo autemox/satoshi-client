@@ -20,7 +20,7 @@ public class ChibMovement : NetworkBehaviour, IMovement
     [SerializeField] private float MOVE_SPEED; // 5
     [SerializeField] private float ROTATION_SPEED;  // 10
     [SerializeField] protected float JUMP_FORCE; // 5
-    [SerializeField] private float GRAVITY; // 20
+    [SerializeField] private float GRAVITY; // -9.81
     
     // Movement state
     private Vector3 moveDirection = Vector3.zero; // horizontal input direction (normalized). x and z only
@@ -39,35 +39,39 @@ public class ChibMovement : NetworkBehaviour, IMovement
     private CharacterController controller;
     private IAnimated animated;
 
-    // network
-    private int updateLocationEveryNthFrame = 20;
-
     protected void Start()
     {
         controller = GetComponent<CharacterController>();
+        animated = GetComponent<IAnimated>();
 
         if (controller == null) Debug.LogError("CharacterController component required for CharacterMovement");
-
-        controller.height = 0.5f;
-        controller.radius = 0.08f;
+        if (animated == null) Debug.LogError("IAnimated component required for CharacterMovement");
     }
     
     protected void MoveCharacter()
     {
         // Calculate movement vector (horizontal only)
         Vector3 horizontalMovement = moveDirection * MOVE_SPEED * Time.fixedDeltaTime;
-        
+
         // Combine with vertical velocity for complete movement
         Vector3 finalMovement = new Vector3(horizontalMovement.x, velocity.y * Time.fixedDeltaTime, horizontalMovement.z);
         
+        // once a second suing ticks and %
+        if (Time.frameCount % 60 == 0)
+        {
+            Debug.Log($"Movement: {moveDirection} Horizontal: {horizontalMovement} Final: {finalMovement} Velocity: {velocity} IsGrounded: {isGrounded}");   
+        }
+
         // Apply movement (includes both horizontal and vertical)
         controller.Move(finalMovement);
         
-        // Adjust rotation to face movement direction
-        if (moveDirection != Vector3.zero)
+        // Rotate around the pivot point to face the character in the direction of movement
+        if (moveDirection.magnitude > 0.1f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, ROTATION_SPEED * Time.fixedDeltaTime);
+            Vector3 flatDirection = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
+            float targetAngle = Mathf.Atan2(flatDirection.x, flatDirection.z) * Mathf.Rad2Deg;
+            float smoothAngle = Mathf.LerpAngle(transform.eulerAngles.y, targetAngle, ROTATION_SPEED * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.Euler(0, smoothAngle, 0);
         }
     }
 
@@ -75,8 +79,8 @@ public class ChibMovement : NetworkBehaviour, IMovement
     protected void HandleGravity()
     {   
         // Apply gravity when not grounded
-        if (isGrounded) velocity.y = -0.5f; // keep character grounded
-        else velocity.y -= GRAVITY * Time.fixedDeltaTime; // full gravity
+        if (isGrounded) velocity.y = -2f; // keep character grounded
+        else velocity.y += GRAVITY * Time.fixedDeltaTime; // full gravity
     }
 
     // Modify FixedUpdate to ensure MoveCharacter is always called
@@ -111,16 +115,13 @@ public class ChibMovement : NetworkBehaviour, IMovement
         }
     }
 
-    // Set the movement direction (to be called by derived classes)
+    // Set the movement direction
     public virtual void SetMovementDirection(Vector3 direction)
     {
         // Normalize horizontal components of direction
-        Vector3 horizontalDir = new Vector3(direction.x, 0, direction.z);
+        moveDirection = direction;
+        if (moveDirection.magnitude > 1f) moveDirection.Normalize();
         
-        if (horizontalDir.magnitude > 1f)
-            horizontalDir.Normalize();
-            
-        moveDirection = horizontalDir;
     }
     
     // Attempts initiate or continue a jump

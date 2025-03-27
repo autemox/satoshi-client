@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ChibSprite : MonoBehaviour
@@ -7,17 +8,16 @@ public class ChibSprite : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private string currentSpriteName = "red_sorceress";
     private int currentSpriteIndex = 9;
+    [SerializeField] private GameObject billboardObject;
     
     protected virtual void Awake()
     {
-        // Get or add a SpriteRenderer component
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null)
-            spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            
-        // Set up sprite renderer for Octopath-like appearance
+        // Set up billboarding
+        spriteRenderer = billboardObject.GetComponent<SpriteRenderer>();
         spriteRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         spriteRenderer.receiveShadows = false;
+
+        if(billboardObject == null) Debug.LogError("Billboard object not found.");
     }
 
     protected virtual void Start()
@@ -40,7 +40,6 @@ public class ChibSprite : MonoBehaviour
         if (sprites != null && sprites.Length > 0)
         {
             spriteRenderer.sprite = sprites[currentSpriteIndex];
-            transform.localScale = new Vector3(4f, 4f, 4f); // scale to normal character height in a unity game
             return true;
         }
         else
@@ -63,13 +62,11 @@ public class ChibSprite : MonoBehaviour
         }
         return false;
     }
-    
-    void LateUpdate()
+
+    private void OnDrawGizmos()
     {
-        // Billboard effect - make sprite always face camera
-        if (Camera.main != null)
-        {
-            transform.rotation = Camera.main.transform.rotation;
-        }
+        // Draw a small sphere at the pivot point
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(transform.position, 0.3f);
     }
 }

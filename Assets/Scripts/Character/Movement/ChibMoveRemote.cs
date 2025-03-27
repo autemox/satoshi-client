@@ -27,7 +27,7 @@ public class ChibMoveRemote : MonoBehaviour
         if (distance > arrivalDistance) {
             
             // move toward position actual
-            movement.SetMovementDirection(moveDirection.normalized);
+            //movement.SetMovementDirection(moveDirection.normalized);
         } 
         else 
         {

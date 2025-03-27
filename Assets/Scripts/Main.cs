@@ -38,6 +38,8 @@ public class Main : NetworkBehaviour
     {
             // Use the Api to get the sprite sheet files
             gameState = GameState.Loading;
+            NetworkManager.Singleton.StartHost(); // start netcode
+            Debug.Log("Host started");
             string[] resultArr = await new ApiClient().LoadSpriteSheetFiles(clientId);
             List<string> spriteSheetFiles = new List<string>(resultArr); // get the list of image urls
             Debug.Log($"Loaded {spriteSheetFiles.Count} spritesheet filenames");
@@ -45,10 +47,6 @@ public class Main : NetworkBehaviour
             Debug.Log("Spritesheets downloaded");
             UiCharacterCreation.instance.ShowWindow(); // show the character creation UI
             Debug.Log("Waiting for user to select spritesheet");
-
-            // Networking
-            NetworkManager.Singleton.StartHost();
-            Debug.Log("Host started");
     }
 
     public void PlayerSelectedCharacter(string playerName, string spriteSheetName) // UiCharacterCreation calls this
@@ -58,8 +56,8 @@ public class Main : NetworkBehaviour
     }
     private void StartGame(string playerName, string spriteSheetName)
     {
+        Debug.Log("Starting game...");
         gameState = GameState.Playing;
-        Debug.Log("Game initialized and ready to play!");
 
         // close all windows
         UiCharacterCreation.instance.HideWindow();

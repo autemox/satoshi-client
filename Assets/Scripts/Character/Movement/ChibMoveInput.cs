@@ -40,7 +40,11 @@ public class ChibMoveInput : NetworkBehaviour
         ProcessJoystick();
 
         // Start Jumping
-        if (jumpAction.triggered) movement.Jump();
+        if (jumpAction.triggered) 
+        {
+            Debug.Log("Jump action triggered.");
+            movement.Jump();
+        }
     }
     
     private void ProcessJoystick() // left joystick moves the character
@@ -53,18 +57,7 @@ public class ChibMoveInput : NetworkBehaviour
         
         if (move.magnitude > 0.1f)
         {
-            // If we have a camera, make movement relative to camera angle
-            if (cameraTransform != null)
-            {
-                // Calculate camera forward and right vectors projected onto XZ plane
-                Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
-                Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
-                
-                // Recalculate move direction relative to camera
-                move = forward * input.y + right * input.x;
-            }
-            
-            // Set the movement direction
+            // input detected, set movement direction
             movement.SetMovementDirection(move);
         }
         else

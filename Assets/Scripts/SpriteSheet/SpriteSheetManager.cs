@@ -36,23 +36,16 @@ public class SpriteSheetManager : MonoBehaviour
         
         // Wait for all downloads to complete
         await Task.WhenAll(downloadTasks);
-        
-        Debug.Log($"Loaded {SpriteSheetCache.Count} SpriteSheets into cache");
     }
     
     public async Task DownloadSpriteSheet(string filename)
     {
-        if (SpriteSheetCache.ContainsKey(filename))
-        {
-            Debug.Log($"SpriteSheet {filename} already cached, skipping download");
-            return;
-        }
+        if (SpriteSheetCache.ContainsKey(filename)) return;
         
         string url = Main.instance.baseUrl + "/images/spritesheets/" + filename;
         
         using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
         {
-            Debug.Log($"Downloading SpriteSheet: {filename}");
             var operation = request.SendWebRequest();
             
             while (!operation.isDone)
@@ -83,8 +76,6 @@ public class SpriteSheetManager : MonoBehaviour
             );
             
             SpriteSheetCache[name] = asset;
-            
-            Debug.Log($"Downloaded and split SpriteSheet: {filename}");
         }
     }
     
@@ -103,12 +94,13 @@ public class SpriteSheetManager : MonoBehaviour
                 
                 // Create the sprite and add it to the array
                 int index = y * cols + x;
-                sprites[index] = Sprite.Create(
-                    texture,
-                    rect,
-                    new Vector2(0.5f, 0.5f), // Pivot at center
-                    100f // Pixels per unit
-                );
+                sprites[index] = 
+                    Sprite.Create(
+                        texture,
+                        rect,
+                        new Vector2(0.5f, 0.12f), // Pivot at bottom but leave a little room for transparent pixels
+                        15f // Pixels per unit
+                    );
             }
         }
         
