@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 2969654804795534752}
   - component: {fileID: 430627895457454881}
   - component: {fileID: -5625879288621732216}
+  - component: {fileID: 6193210830758604446}
   - component: {fileID: 5213180239727464224}
   - component: {fileID: 3283610324876660537}
+  - component: {fileID: 5432226385671401622}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -145,6 +147,27 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &6193210830758604446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004007857767497172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &5213180239727464224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,13 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b4cf9c83a9254b558a4ceec7d3daa66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentAnimation: 0
-  frameRate: 6
-  animationEnabled: 1
-  MOVE_SPEED: 5
-  ROTATION_SPEED: 10
-  JUMP_FORCE: 5
-  GRAVITY: 20
 --- !u!114 &3283610324876660537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,11 +189,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 9004007857767497172}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 894615632975648e39694c23d35281e1, type: 3}
+  m_Script: {fileID: 11500000, guid: 243a6ff73ec4e4a27acbd663005bd97e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shadowOffset: 0.01
-  shadowSize: 10
-  shadowShrinkWithHeight: 0.5
-  maxHeightEffect: 5
-  shadowAlpha: 0.85
+  MOVE_SPEED: 5
+  ROTATION_SPEED: 10
+  JUMP_FORCE: 5
+  GRAVITY: 20
+  Position:
+    m_InternalValue: {x: 0, y: 0, z: 0}
+--- !u!114 &5432226385671401622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004007857767497172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0487b8254ea42baa66bbe0b8d9cd87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentAnimation: 0
+  frameRate: 6
+  animationEnabled: 1

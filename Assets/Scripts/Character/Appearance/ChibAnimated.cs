@@ -1,26 +1,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnimatedCharacter : SheetCharacter
+public enum Pose
+{
+    StandFront, StandBack, StandLeft, StandRight,
+    WalkFront, WalkBack, WalkLeft, WalkRight,
+    FallFront, FallBack, FallLeft, FallRight
+}
+
+public interface IAnimated
+{
+    void SetAnimation(Pose animation);
+    Pose GetCurrentAnimation();
+    void SetAnimationEnabled(bool enabled);
+    void StandInDirection(Vector2 direction);
+    void FallInDirection(Vector2 direction);
+    void WalkInDirection(Vector2 direction);
+}
+
+public class ChibAnimated : ChibSprite, IAnimated
 {
     // Current animation state
-    [SerializeField] private CharacterAnimation currentAnimation = CharacterAnimation.StandFront;
+    [SerializeField] private Pose currentAnimation = Pose.StandFront;
     
     // Animation frame data - maps animation states to sequences of sprite indices
-    private Dictionary<CharacterAnimation, int[]> animations = new Dictionary<CharacterAnimation, int[]>()
+    private Dictionary<Pose, int[]> animations = new Dictionary<Pose, int[]>()
     {
-        { CharacterAnimation.WalkLeft, new int[] { 12, 13, 14, 15 } },
-        { CharacterAnimation.WalkRight, new int[] { 4, 5, 6, 7 } },
-        { CharacterAnimation.WalkFront, new int[] { 8, 9, 10, 11 } },
-        { CharacterAnimation.WalkBack, new int[] { 0, 1, 2, 3 } },
-        { CharacterAnimation.StandBack, new int[] { 1 } },
-        { CharacterAnimation.StandRight, new int[] { 5 } },
-        { CharacterAnimation.StandLeft, new int[] { 13 } },
-        { CharacterAnimation.StandFront, new int[] { 9 } },
-        { CharacterAnimation.FallBack, new int[] { 2 } },
-        { CharacterAnimation.FallRight, new int[] { 6 } },
-        { CharacterAnimation.FallLeft, new int[] { 14 } },
-        { CharacterAnimation.FallFront, new int[] { 10 } }
+        { Pose.WalkLeft, new int[] { 12, 13, 14, 15 } },
+        { Pose.WalkRight, new int[] { 4, 5, 6, 7 } },
+        { Pose.WalkFront, new int[] { 8, 9, 10, 11 } },
+        { Pose.WalkBack, new int[] { 0, 1, 2, 3 } },
+        { Pose.StandBack, new int[] { 1 } },
+        { Pose.StandRight, new int[] { 5 } },
+        { Pose.StandLeft, new int[] { 13 } },
+        { Pose.StandFront, new int[] { 9 } },
+        { Pose.FallBack, new int[] { 2 } },
+        { Pose.FallRight, new int[] { 6 } },
+        { Pose.FallLeft, new int[] { 14 } },
+        { Pose.FallFront, new int[] { 10 } }
     };
     
     // Animation properties
@@ -44,10 +61,10 @@ public class AnimatedCharacter : SheetCharacter
     protected override void Update()
     {
         // Handle V key for debugging
-        if (Input.GetKeyDown(KeyCode.V) && Main.instance.vChangesCharacterAnimation)
+        if (Input.GetKeyDown(KeyCode.V) && DevTools.instance.vChangesCharacterAnimation)
         {
             // random animation
-            CharacterAnimation[] animations = (CharacterAnimation[])System.Enum.GetValues(typeof(CharacterAnimation));
+            Pose[] animations = (Pose[])System.Enum.GetValues(typeof(Pose));
             SetAnimation(animations[Random.Range(0, animations.Length)]);
         }
         
@@ -83,7 +100,7 @@ public class AnimatedCharacter : SheetCharacter
     }
     
     // Change the current animation state
-    public void SetAnimation(CharacterAnimation animation)
+    public void SetAnimation(Pose animation)
     {
         // Only change if it's different
         if (currentAnimation != animation)
@@ -101,7 +118,7 @@ public class AnimatedCharacter : SheetCharacter
     }
     
     // Get the current animation state
-    public CharacterAnimation GetCurrentAnimation()
+    public Pose GetCurrentAnimation()
     {
         return currentAnimation;
     }
@@ -117,13 +134,13 @@ public class AnimatedCharacter : SheetCharacter
         // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            if (direction.x > 0) SetAnimation(CharacterAnimation.StandRight);
-            else SetAnimation(CharacterAnimation.StandLeft);
+            if (direction.x > 0) SetAnimation(Pose.StandRight);
+            else SetAnimation(Pose.StandLeft);
         }
         else
         {
-            if (direction.y > 0) SetAnimation(CharacterAnimation.StandBack);
-            else SetAnimation(CharacterAnimation.StandFront);
+            if (direction.y > 0) SetAnimation(Pose.StandBack);
+            else SetAnimation(Pose.StandFront);
         }
     }
 
@@ -132,13 +149,13 @@ public class AnimatedCharacter : SheetCharacter
         // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) 
         {
-            if (direction.x > 0) SetAnimation(CharacterAnimation.FallRight);
-            else SetAnimation(CharacterAnimation.FallLeft);
+            if (direction.x > 0) SetAnimation(Pose.FallRight);
+            else SetAnimation(Pose.FallLeft);
         }
         else
         {
-            if (direction.y > 0) SetAnimation(CharacterAnimation.FallBack);
-            else SetAnimation(CharacterAnimation.FallFront);
+            if (direction.y > 0) SetAnimation(Pose.FallBack);
+            else SetAnimation(Pose.FallFront);
         }
     }
     
@@ -149,17 +166,17 @@ public class AnimatedCharacter : SheetCharacter
         {
             // Horizontal movement dominant
             if (direction.x > 0)
-                SetAnimation(CharacterAnimation.WalkRight);
+                SetAnimation(Pose.WalkRight);
             else
-                SetAnimation(CharacterAnimation.WalkLeft);
+                SetAnimation(Pose.WalkLeft);
         }
         else
         {
             // Vertical movement dominant
             if (direction.y > 0)
-                SetAnimation(CharacterAnimation.WalkBack);
+                SetAnimation(Pose.WalkBack);
             else
-                SetAnimation(CharacterAnimation.WalkFront);
+                SetAnimation(Pose.WalkFront);
         }
     }
 }

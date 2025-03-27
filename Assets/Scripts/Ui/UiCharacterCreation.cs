@@ -7,19 +7,27 @@ using System.Threading.Tasks;
 
 public class UiCharacterCreation : MonoBehaviour
 {
+    [Header("UI Elements")]
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private TMP_InputField characterDescriptionInput;
     [SerializeField] private Button submitButton;
     [SerializeField] private TextMeshProUGUI buttonText;
-    [SerializeField] private GameObject presetButtonsContainer; // Assign this in the inspector
-    [SerializeField] private GameObject presetButtonPrefab; // Assign preset button prefab in inspector
-    [SerializeField] private GameObject loadingWarningObject; // Assign this in the inspector
-    [SerializeField] private TextMeshProUGUI loadingWarningText; // Assign this in the inspector
+    [SerializeField] private GameObject presetButtonsContainer; 
+    [SerializeField] private GameObject presetButtonPrefab;
+    [SerializeField] private GameObject loadingWarningObject; 
+    [SerializeField] private TextMeshProUGUI loadingWarningText; 
     private Coroutine loadingWarningCoroutine;
-    private bool isPopulatingPresets = false;
-
+    private bool presetsPopulated = false; // created all the buttons for the presets
     private string spriteSheetName;
-    private bool isWaitingForSpriteSheet = false;
+    private bool isWaitingForGeneration = false; // currently waiting for retrodiffusion generation
+
+    // singleton
+    public static UiCharacterCreation instance { get; private set; }
+    void Awake()
+    {
+        if (instance != null && instance != this) { Destroy(gameObject); return; }
+        instance = this;
+    }
     
     void Start()
     {
@@ -36,23 +44,12 @@ public class UiCharacterCreation : MonoBehaviour
         
         submitButton.onClick.AddListener(OnSubmitButtonClicked);
 
-        // Start populating preset buttons
-        StartCoroutine(PopulatePresetButtons());
+        // hide the UI until needed
+        HideWindow();
     }
     
     void Update()
     {
-        if (isWaitingForSpriteSheet && !string.IsNullOrEmpty(spriteSheetName))
-        {
-            var spriteArray = SpriteSheetManager.instance.GetSpriteArray(spriteSheetName);
-            if (spriteArray != null)
-            {
-                isWaitingForSpriteSheet = false;
-                gameObject.SetActive(false); // Hide character creation UI
-                Main.instance.PlayerCharacterGeneratedSuccessfully(spriteSheetName);
-            }
-        }
-        
         // widen screen for mobile
         if(Main.instance.isPortrait) 
         {
@@ -62,20 +59,26 @@ public class UiCharacterCreation : MonoBehaviour
         }
     }
 
-    private IEnumerator PopulatePresetButtons()
+    public void ShowWindow()
     {
-        if (isPopulatingPresets) yield break;
-        
-        isPopulatingPresets = true;
-        
-        // Keep checking until we get sprite sheet names
-        string[] spriteSheetNames = new string[0];
-        while (spriteSheetNames.Length == 0)
-        {
-            spriteSheetNames = SpriteSheetManager.instance.GetSpriteSheetNames();
-            if (spriteSheetNames.Length == 0)
-                yield return new WaitForSeconds(0.5f);
-        }
+        if (gameObject.activeSelf) return;
+
+        // load list of recently created characters
+        if(!presetsPopulated) PopulatePresetButtons();
+
+        // show the window
+        gameObject.SetActive(true);
+    }
+
+    public void HideWindow()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void PopulatePresetButtons()
+    {
+        string[] spriteSheetNames = SpriteSheetManager.instance.GetSpriteSheetNames();
+        if (spriteSheetNames.Length == 0) Debug.LogError("No sprite sheet names found");
         
         // Clear existing buttons
         foreach (Transform child in presetButtonsContainer.transform)
@@ -103,7 +106,7 @@ public class UiCharacterCreation : MonoBehaviour
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() => {
                     Debug.Log($"Button clicked: {sheetName}");
-                    HandlePresetButtonClick(sheetName);
+                    OnPresetButtonClicked(sheetName);
                 });
                 
                 Debug.Log($"Successfully added click listener to button for {sheetName}");
@@ -114,27 +117,24 @@ public class UiCharacterCreation : MonoBehaviour
             }
         }
         
-        isPopulatingPresets = false;
-    }
-
-    private void HandlePresetButtonClick(string spriteSheetName)
-    {
-        Debug.Log($"Handling click for {spriteSheetName}");
-        Main.instance.PlayerSelectedPreSetCharacter(spriteSheetName);
-        gameObject.SetActive(false);
+        presetsPopulated = true;
     }
 
     private void OnPresetButtonClicked(string spriteSheetName)
     {
-        Debug.Log($"Preset button clicked: {spriteSheetName}");
+        // Validate inputs
+        if (string.IsNullOrEmpty(usernameInput.text))
+        {
+            loadingWarningText.text = "Username cannot be empty";
+            loadingWarningObject.SetActive(true);
+            return;
+        }
 
-        // Call to main instance with the selected preset
-        Main.instance.PlayerSelectedPreSetCharacter(spriteSheetName);
-        
-        // Hide character creation UI
+        Debug.Log($"Handling click for {spriteSheetName}");
+        Main.instance.PlayerSelectedCharacter(usernameInput.text, spriteSheetName);
         gameObject.SetActive(false);
     }
-    
+
     private async void OnSubmitButtonClicked()
     {
         // Validate inputs
@@ -155,29 +155,20 @@ public class UiCharacterCreation : MonoBehaviour
         // Update button text
         buttonText.text = "Please wait...";
         submitButton.interactable = false;
+        isWaitingForGeneration = true;
 
-        // Start the warning timer
-        if(loadingWarningCoroutine != null)
-            StopCoroutine(loadingWarningCoroutine);
+        // Start the warning timer (warning reminds user to wait a little longer)
+        if(loadingWarningCoroutine != null) StopCoroutine(loadingWarningCoroutine);
         loadingWarningCoroutine = StartCoroutine(ShowLoadingWarningAfterDelay(10f));
-        
         
         // Make API call to generate sprite sheet
         string filename = await new ApiClient().GenerateSpriteSheet(characterDescriptionInput.text);
         
         if (!string.IsNullOrEmpty(filename))
         {
-            // Update button text
             buttonText.text = "Downloading...";
-            
-            // Store sprite sheet name
-            spriteSheetName = filename;
-            
-            // Start downloading the sprite sheet
-            SpriteSheetManager.instance.DownloadSpriteSheet(spriteSheetName);
-            
-            // Start checking for sprite sheet to be loaded
-            isWaitingForSpriteSheet = true;
+            await Task.WhenAll(new List<Task>() { SpriteSheetManager.instance.DownloadSpriteSheet(filename) });
+            Main.instance.PlayerSelectedCharacter(usernameInput.text, filename);
         }
         else
         {
@@ -186,6 +177,8 @@ public class UiCharacterCreation : MonoBehaviour
             buttonText.text = "Failed! Try again";
             submitButton.interactable = true;
         }
+
+        isWaitingForGeneration = false;
     }
 
     private IEnumerator ShowLoadingWarningAfterDelay(float delayInSeconds)

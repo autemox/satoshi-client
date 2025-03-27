@@ -1,0 +1,76 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using Unity.Netcode;
+
+[RequireComponent(typeof(PlayerInput))]
+public class ChibMoveInput : NetworkBehaviour
+{
+    // Input 
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    
+    // components
+    private IMovement movement;
+    
+    // Other 
+    private Transform cameraTransform;
+    protected void Start()
+    {
+        // get components
+        movement = GetComponent<ChibMovement>();
+        cameraTransform = Camera.main.transform;
+        
+        // Get the move and jump actions
+        PlayerInput playerInput = GetComponent<PlayerInput>();
+        moveAction = playerInput.actions["Move"];
+        jumpAction = playerInput.actions["Jump"];
+        
+        // Debug
+        if(moveAction == null) Debug.LogError("Move action not found.");
+        if(jumpAction == null) Debug.LogError("Jump action not found.");    
+        if(movement == null) Debug.LogError("Movement component not found.");
+        if(cameraTransform == null) Debug.LogError("Camera transform not found.");
+    }
+    
+    protected void FixedUpdate()
+    {
+        if(!IsOwner) return;
+
+        // Process input
+        ProcessJoystick();
+
+        // Start Jumping
+        if (jumpAction.triggered) movement.Jump();
+    }
+    
+    private void ProcessJoystick() // left joystick moves the character
+    {
+        if(cameraTransform == null) Debug.LogError("No camera found.");
+        if(moveAction == null) Debug.LogError("Move action not found.");
+
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        Vector3 move = new Vector3(input.x, 0, input.y);
+        
+        if (move.magnitude > 0.1f)
+        {
+            // If we have a camera, make movement relative to camera angle
+            if (cameraTransform != null)
+            {
+                // Calculate camera forward and right vectors projected onto XZ plane
+                Vector3 forward = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up).normalized;
+                Vector3 right = Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up).normalized;
+                
+                // Recalculate move direction relative to camera
+                move = forward * input.y + right * input.x;
+            }
+            
+            // Set the movement direction
+            movement.SetMovementDirection(move);
+        }
+        else
+        {
+            // No input, stop movement
+            movement.StopMovement();
+        }
+    }
+}
