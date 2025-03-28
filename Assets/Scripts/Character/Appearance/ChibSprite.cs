@@ -3,7 +3,7 @@ using UnityEngine;
 public class ChibSprite : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private string currentSpriteName = "undefined";
+    public string currentSpriteName = "undefined";
     private int currentSpriteIndex = 9;
     [SerializeField] private GameObject billboardObject;
     
@@ -19,6 +19,8 @@ public class ChibSprite : MonoBehaviour
 
     public bool SetSprite(string spriteName)
     {
+        Debug.Log("Setting sprite to: " + spriteName);
+        
         currentSpriteName = spriteName; // update current sprite name
         
         // Get the sprite array from SpriteSheetManager

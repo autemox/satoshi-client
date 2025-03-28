@@ -9,7 +9,6 @@ using Unity.Netcode;
 
 public class MetaEntityManager : NetworkBehaviour
 {
-    private Dictionary<string, MetaEntity> metaEntities = new Dictionary<string, MetaEntity>();
     public static MetaEntityManager instance { get; private set; }
 
     void Awake()
@@ -18,64 +17,37 @@ public class MetaEntityManager : NetworkBehaviour
         instance = this;
     }
 
+    public Vector3 RandomLocation() 
+    {
+        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+    }
+
     public void InitializeMetaEntityManager()
     {
         if (IsServer || IsHost)
         {
-            // dummy data
-            AddOrUpdateEntity(new MetaEntity("Trump", new Vector3(-8, 0, 4), "trump"));
-            AddOrUpdateEntity(new MetaEntity("Jesus", new Vector3(10, 0, -2), "jesus"));
-
-            // Start update loop
-            InvokeRepeating(nameof(UpdateClients), 0f, 10f);
+            // create metaentities.  later this will load from db
+            ObjectManager.instance.CreateNetworkObjectServerRpc("Trump", "trump", EntityType.MetaEntity, RandomLocation(), default);
+            ObjectManager.instance.CreateNetworkObjectServerRpc("Jesus", "jesus", EntityType.MetaEntity, RandomLocation(), default);
+            ObjectManager.instance.CreateNetworkObjectServerRpc("blue-water-sorceress", "blue-water-sorceress", EntityType.MetaEntity, RandomLocation(), default);
+            ObjectManager.instance.CreateNetworkObjectServerRpc("fruit-loops-toucan", "fruit-loops-toucan", EntityType.MetaEntity, RandomLocation(), default);
+            ObjectManager.instance.CreateNetworkObjectServerRpc("red-sorceress", "red-sorceress", EntityType.MetaEntity, RandomLocation(), default);
+            ObjectManager.instance.CreateNetworkObjectServerRpc("chicken", "chicken", EntityType.MetaEntity, RandomLocation(), default);
+            
         }
     }
 
-    public void AddOrUpdateEntity(MetaEntity entity)
+    [ServerRpc(RequireOwnership = false)]
+    public void TransitionEntityServerRpc(string entityName, string followTarget, string transitionSprite)
     {
-        metaEntities[entity.name] = entity;
-        entity.changed = true;
-    }
+        Transform childTransform = transform.Find(entityName);
+        if(childTransform == null) Debug.LogError("MetaEntity not found: " + entityName + "");
 
-    private void UpdateClients()
-    {
-        if (!IsServer) return;
+        ChibMetaEntity metaEntity = childTransform.GetComponent<ChibMetaEntity>();
+        if(metaEntity == null) Debug.LogError("MetaEntity component not found: " + entityName + "");
 
-        List<MetaEntity> changedEntities = new List<MetaEntity>();
-
-        // Collect all changed entities
-        foreach (var entity in metaEntities.Values)
-        {
-            if (entity.changed)
-            {
-                changedEntities.Add(entity);
-                entity.changed = false;
-            }
-        }
-
-        if (changedEntities.Count > 0) SendEntityUpdatesClientRpc(changedEntities.ToArray());
-    }
-
-    [ClientRpc]
-    private void SendEntityUpdatesClientRpc(MetaEntity[] updatedEntities)
-    {
-        foreach (MetaEntity entity in updatedEntities)
-        {
-            // find the object (a child of ObjectManager.instance with name entity.name)
-            Transform objTransform = ObjectManager.instance.transform.Find(entity.name);
-
-            if (objTransform != null)
-            {
-                // update the metaentity data to the objects ChibMovePatrol component
-                ChibMovePatrol patrolComponent = objTransform.GetComponent<ChibMovePatrol>();
-                if (patrolComponent != null) patrolComponent.UpdateMetaEntity(entity);
-            }
-            else
-            {
-                // create an object and apply the entity data
-                GameObject obj = ObjectManager.instance.CreateLocalObject(entity.name, entity.defaultSprite, EntityType.MetaEntity, entity.position);
-                obj.GetComponent<ChibMovePatrol>().UpdateMetaEntity(entity);
-            }
-        }
+        Debug.Log("Transitioning entity " + entityName + " to follow player " + followTarget+" as sprite "+ transitionSprite);
+        metaEntity.followTarget.SetString(followTarget);
+        metaEntity.transitionSprite.SetString(transitionSprite);
     }
 }

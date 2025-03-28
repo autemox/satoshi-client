@@ -29,20 +29,26 @@ public class ObjectManager : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void CreateNetworkObjectServerRpc(string name, string spriteName, EntityType entityType, ServerRpcParams rpcParams = default)
+    public void CreateNetworkObjectServerRpc(string name, string spriteName, EntityType entityType, Vector3 position = default, ServerRpcParams rpcParams = default)
     {
+        if(position == default) position = new Vector3(0,0,0);
+        
         // owner client id
         ulong clientId = rpcParams.Receive.SenderClientId;
 
         // Instantiate the character prefab
-        GameObject obj = Instantiate(entityType == EntityType.Player ? playerPrefab : testPrefab, transform);
-        
+        GameObject obj = Instantiate(
+            entityType == EntityType.Player ? playerPrefab : 
+            entityType == EntityType.MetaEntity ? metaEntityPrefab :
+            testPrefab, position, Quaternion.identity, transform);
+
         // Network spawning
         NetworkObject networkObject = obj.GetComponent<NetworkObject>();
-        networkObject.SpawnWithOwnership(clientId); // Assigns the player object to the specific client
+        if(clientId != 0) networkObject.SpawnWithOwnership(clientId); 
+        else networkObject.Spawn(); // Server owns the object
 
         // Initialize details
-        InitializeObject(networkObject.gameObject, name, spriteName, entityType, new Vector3(0,0,0)); // initialize on server
+        InitializeObject(networkObject.gameObject, name, spriteName, entityType); // initialize on server
         InitializeNetworkObjectClientRpc(networkObject.NetworkObjectId, name, spriteName, entityType); // initialize on clients
     }
 
@@ -50,16 +56,20 @@ public class ObjectManager : NetworkBehaviour
     {
         // Instantiate the character prefab
         GameObject obj = Instantiate(entityType == EntityType.MetaEntity ? metaEntityPrefab : testPrefab, location, Quaternion.identity, transform);
-        InitializeObject(obj, name, spriteName, entityType, location); // initialize locally
+        InitializeObject(obj, name, spriteName, entityType); // initialize locally
         return obj;
     }
 
-    public void InitializeObject(GameObject obj, string name, string spriteName, EntityType entityType, Vector3 position)
+    public void InitializeObject(GameObject obj, string name, string spriteName, EntityType entityType)
     {
         // Set common object properties
         obj.name = name;                                      // Set the object name
-        obj.transform.position = position;                    // choose object location
         obj.tag = entityType.ToString();                      // Set tag
+        
+        // Pool objects under common parent
+        if(entityType == EntityType.Player) obj.transform.parent = transform;
+        else if(entityType == EntityType.MetaEntity) obj.transform.parent = MetaEntityManager.instance.transform;
+        else obj.transform.parent = transform;
 
         // Handle chib objects
         ChibSprite sprite = obj.GetComponent<ChibSprite>();
@@ -72,7 +82,7 @@ public class ObjectManager : NetworkBehaviour
         NetworkObject networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
         if (networkObject != null)
         {
-            InitializeObject(networkObject.gameObject, name, spriteName, entityType, new Vector3(0,0,0));
+            InitializeObject(networkObject.gameObject, name, spriteName, entityType);
         }
     }
 }

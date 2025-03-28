@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 using System;
 using Unity.Netcode;
 using Unity.Multiplayer.Playmode;
@@ -27,6 +25,7 @@ public class Main : NetworkBehaviour
     public GameState gameState { get; private set; } = GameState.None;
     public static Main instance { get; private set; }
     public bool IsConnected => !NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsConnectedClient;
+    public GameObject player => FindFirstObjectByType<ChibMoveLocal>()?.gameObject;
     void Awake()
     {
         // singleton
@@ -53,7 +52,14 @@ public class Main : NetworkBehaviour
                 Debug.Log("Client started");
             }
             else Debug.LogError("No valid player tag found. Assign 'Host' or 'Client' tag to the player.");
-                
+            
+            // monitor network
+            if(NetworkManager.Singleton) {
+                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+            }
+            else Debug.LogError("NetworkManager not found."); 
+            
             string[] resultArr = await new ApiClient().LoadSpriteSheetFiles(clientId);
             List<string> spriteSheetFiles = new List<string>(resultArr); // get the list of image urls
             Debug.Log($"Loaded {spriteSheetFiles.Count} spritesheet filenames");
@@ -61,15 +67,6 @@ public class Main : NetworkBehaviour
             Debug.Log("Spritesheets downloaded");
             UiCharacterCreation.instance.ShowWindow(); // show the character creation UI
             Debug.Log("Waiting for user to select spritesheet");
-    }
-
-    void OnEnable()
-    {
-        if(NetworkManager.Singleton) {
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
-        }
-        else Debug.LogError("NetworkManager not found.");  
     }
 
     private void OnClientConnected(ulong clientId)
@@ -97,7 +94,7 @@ public class Main : NetworkBehaviour
         
         // create a character
         Debug.Log("Starting game... Calling CreateNetworkObject");
-        ObjectManager.instance.CreateNetworkObjectServerRpc(playerName, spriteSheetName, EntityType.Player, default);
+        ObjectManager.instance.CreateNetworkObjectServerRpc(playerName, spriteSheetName, EntityType.Player, default, default);
 
         // initialize the meta entity manager
         MetaEntityManager.instance.InitializeMetaEntityManager();
