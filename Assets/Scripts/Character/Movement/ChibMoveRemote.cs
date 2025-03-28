@@ -7,32 +7,31 @@ public class ChibMoveRemote : NetworkBehaviour
     
     // components
     private ChibMovement movement;
+    private ChibNetwork network;
     
     private void Start()
     {
         movement = GetComponent<ChibMovement>();
+        network = GetComponent<ChibNetwork>();
 
         if(movement == null) Debug.LogError("Movement component not found.");
+        if(network == null) Debug.LogError("Network component not found.");
     }
     
     public override void OnNetworkSpawn()
     {
         // check if you are the owner of this object
-        if (IsOwner)
-        {
-            Debug.Log("I am the owner of "+ gameObject.name+" so I will disable ChibMoveRemote");
-            enabled = false;
-        }
+        if (IsOwner) enabled = false;
 
         base.OnNetworkSpawn();
     }
 
     private void Update() 
     {
-        if (movement.IsOwner) return;
+        if (IsOwner) return;
         
         // Calculate direction to position actual
-        Vector3 moveDirection = movement.Position.Value - transform.position;
+        Vector3 moveDirection = network.Position.Value - transform.position;
         moveDirection.y = 0; // Keep movement horizontal
         float distance = moveDirection.magnitude;
         

@@ -98,6 +98,9 @@ public class Main : NetworkBehaviour
         // create a character
         Debug.Log("Starting game... Calling CreateNetworkObject");
         ObjectManager.instance.CreateNetworkObjectServerRpc(playerName, spriteSheetName, EntityType.Player, default);
+
+        // initialize the meta entity manager
+        MetaEntityManager.instance.InitializeMetaEntityManager();
     }
 
     void Update()

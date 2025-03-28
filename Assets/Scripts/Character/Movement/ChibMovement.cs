@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.Netcode;
 
 public interface IMovement
 {
@@ -12,8 +11,9 @@ public interface IMovement
     bool isJumping { get; }
 }
 
+
 [RequireComponent(typeof(CharacterController))]
-public class ChibMovement : NetworkBehaviour, IMovement
+public class ChibMovement : MonoBehaviour, IMovement
 {
     // Movement properties
     [Header("Movement Settings")]
@@ -25,8 +25,6 @@ public class ChibMovement : NetworkBehaviour, IMovement
     // Movement state
     private Vector3 moveDirection = Vector3.zero; // horizontal input direction (normalized). x and z only
     private Vector3 velocity = Vector3.zero; // the actual velocity of the character
-    public NetworkVariable<Vector3> Position = new NetworkVariable<Vector3>(
-        writePerm: NetworkVariableWritePermission.Owner);
     private Vector2 lastMovementDirection = Vector2.down;  // for deciding sprite when character is standing still
 
     // jumping
@@ -77,7 +75,7 @@ public class ChibMovement : NetworkBehaviour, IMovement
         else velocity.y += GRAVITY * Time.fixedDeltaTime; // full gravity
     }
 
-    // Modify FixedUpdate to ensure MoveCharacter is always called
+    // Modify FixedUpdate to remove networking code
     protected void FixedUpdate()
     {
         // Check if character is grounded
@@ -88,10 +86,6 @@ public class ChibMovement : NetworkBehaviour, IMovement
         
         // Apply movement (always, not just when horizontal movement exists)
         MoveCharacter();
-
-        // Update network position if this is the owner and its moved
-        if (IsOwner && Vector3.Distance(transform.position, Position.Value) > 0.01f)
-            Position.Value = transform.position;
         
         // Animation logic
         if (moveDirection.magnitude > 0.1f && isGrounded)
@@ -115,7 +109,6 @@ public class ChibMovement : NetworkBehaviour, IMovement
         // Normalize horizontal components of direction
         moveDirection = direction;
         if (moveDirection.magnitude > 1f) moveDirection.Normalize();
-        
     }
     
     // Attempts initiate or continue a jump
@@ -145,5 +138,10 @@ public class ChibMovement : NetworkBehaviour, IMovement
     public float GetCurrentSpeed()
     {
         return moveDirection.magnitude * MOVE_SPEED;
+    }
+
+    public void SetMovementSpeed(float speed)
+    {
+        MOVE_SPEED = speed;
     }
 }

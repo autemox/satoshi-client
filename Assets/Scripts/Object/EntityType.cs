@@ -1,7 +1,8 @@
 public enum EntityType
 { 
-    Player, 
-    RemotePlayer,
+    Player, // local player (you)
+    RemotePlayer, // remotely controlled player
+    MetaEntity, // offline player
     BeingRemoved,
     Undefined 
 }

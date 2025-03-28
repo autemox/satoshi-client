@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 
 [RequireComponent(typeof(PlayerInput))]
-public class ChibMoveInput : NetworkBehaviour
+public class ChibMoveLocal : NetworkBehaviour
 {
     // Input 
     private InputAction moveAction;
@@ -35,11 +35,7 @@ public class ChibMoveInput : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         // check if you are the owner of this object
-        if (!IsOwner)
-        {
-            Debug.Log("I am not the owner of "+ gameObject.name+" so I will disable ChibMoveInput");
-            enabled = false;
-        }
+        if (!IsOwner) enabled = false;
 
         base.OnNetworkSpawn();
     }
