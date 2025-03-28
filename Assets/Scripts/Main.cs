@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System;
 using Unity.Netcode;
+using Unity.Multiplayer.Playmode;
+using System.Linq; 
 
 public class Main : NetworkBehaviour
 {
@@ -24,6 +26,7 @@ public class Main : NetworkBehaviour
     // other variables
     public GameState gameState { get; private set; } = GameState.None;
     public static Main instance { get; private set; }
+    public bool IsConnected => !NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsConnectedClient;
     void Awake()
     {
         // singleton
@@ -38,8 +41,19 @@ public class Main : NetworkBehaviour
     {
             // Use the Api to get the sprite sheet files
             gameState = GameState.Loading;
-            NetworkManager.Singleton.StartHost(); // start netcode
-            Debug.Log("Host started");
+            
+            if(CurrentPlayer.ReadOnlyTags().Contains("Host")) // linq
+            {
+                NetworkManager.Singleton.StartHost(); // start netcode
+                Debug.Log("Host started");
+            }
+            else if (CurrentPlayer.ReadOnlyTags().Contains("Client")) // linq
+            {
+                NetworkManager.Singleton.StartClient();
+                Debug.Log("Client started");
+            }
+            else Debug.LogError("No valid player tag found. Assign 'Host' or 'Client' tag to the player.");
+                
             string[] resultArr = await new ApiClient().LoadSpriteSheetFiles(clientId);
             List<string> spriteSheetFiles = new List<string>(resultArr); // get the list of image urls
             Debug.Log($"Loaded {spriteSheetFiles.Count} spritesheet filenames");
@@ -49,21 +63,41 @@ public class Main : NetworkBehaviour
             Debug.Log("Waiting for user to select spritesheet");
     }
 
+    void OnEnable()
+    {
+        if(NetworkManager.Singleton) {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+        }
+        else Debug.LogError("NetworkManager not found.");  
+    }
+
+    private void OnClientConnected(ulong clientId)
+    {
+        Debug.Log($"Client connected with ID: {clientId}");
+    }
+
+    private void OnClientDisconnected(ulong clientId)
+    {
+        Debug.Log($"Client disconnected with ID: {clientId}");
+    }
+
     public void PlayerSelectedCharacter(string playerName, string spriteSheetName) // UiCharacterCreation calls this
     {
         // Start the game
-        StartGame(playerName, spriteSheetName);
+        if(IsConnected) StartGame(playerName, spriteSheetName);
+        else if(UiCharacterCreation.instance) UiCharacterCreation.instance.ShowWarning("Not connected to server.");
     }
     private void StartGame(string playerName, string spriteSheetName)
     {
-        Debug.Log("Starting game...");
         gameState = GameState.Playing;
 
         // close all windows
         UiCharacterCreation.instance.HideWindow();
         
         // create a character
-        ObjectManager.instance.CreatePlayerServerRpc(playerName, spriteSheetName);
+        Debug.Log("Starting game... Calling CreateNetworkObject");
+        ObjectManager.instance.CreateNetworkObjectServerRpc(playerName, spriteSheetName, EntityType.Player, default);
     }
 
     void Update()

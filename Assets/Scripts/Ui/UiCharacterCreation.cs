@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Threading.Tasks;
+using Unity.Multiplayer.Playmode;
+using System.Linq; 
 
 public class UiCharacterCreation : MonoBehaviour
 {
@@ -43,6 +45,10 @@ public class UiCharacterCreation : MonoBehaviour
         loadingWarningObject.SetActive(false);
         
         submitButton.onClick.AddListener(OnSubmitButtonClicked);
+
+        // populate name for development
+        if(!Main.instance.isProduction && CurrentPlayer.ReadOnlyTags().Contains("Host")) usernameInput.text = "Host";
+        else if(!Main.instance.isProduction && CurrentPlayer.ReadOnlyTags().Contains("Client")) usernameInput.text = "Client";
 
         // hide the UI until needed
         HideWindow();
@@ -115,18 +121,22 @@ public class UiCharacterCreation : MonoBehaviour
         presetsPopulated = true;
     }
 
+    public void ShowWarning(string message)
+    {
+        loadingWarningText.text = message;
+        loadingWarningObject.SetActive(true);
+    }
+
     private void OnPresetButtonClicked(string spriteSheetName)
     {
         // Validate inputs
         if (string.IsNullOrEmpty(usernameInput.text))
         {
-            loadingWarningText.text = "Username cannot be empty";
-            loadingWarningObject.SetActive(true);
+            ShowWarning("Username cannot be empty");
             return;
         }
 
         Main.instance.PlayerSelectedCharacter(usernameInput.text, spriteSheetName);
-        gameObject.SetActive(false);
     }
 
     private async void OnSubmitButtonClicked()
@@ -179,6 +189,6 @@ public class UiCharacterCreation : MonoBehaviour
         yield return new WaitForSeconds(delayInSeconds);
         
         // Show the warning object after the delay
-        loadingWarningObject.SetActive(true);
+        ShowWarning("Almost done... it can take up to 60 seconds to generate a character.");
     }
 }

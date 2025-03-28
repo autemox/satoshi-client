@@ -25,42 +25,52 @@ public class ObjectManager : NetworkBehaviour
 
     }
 
-    [ServerRpc]
-    public void CreatePlayerServerRpc(string playerName, string spriteName, ServerRpcParams rpcParams = default)
+    [ServerRpc(RequireOwnership = false)]
+    public void CreateNetworkObjectServerRpc(string name, string spriteName, EntityType entityType, ServerRpcParams rpcParams = default)
     {
+        // owner client id
         ulong clientId = rpcParams.Receive.SenderClientId;
-        if(!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId)) Debug.LogError("Sender client not found in connected clients list.");
-        if(!NetworkManager.Singleton.IsServer) Debug.LogError("CreatePlayerServerRpc called on non-server.");
 
-        // create the player with a callback to spawn it first
-        GameObject player = CreateObject(playerName, spriteName, EntityType.Player, clientId, (obj) => {
-            
-            NetworkObject networkObject = obj.GetComponent<NetworkObject>();
-            networkObject.SpawnAsPlayerObject(clientId); // Assigns the player object to the specific client
-            Debug.Log($"Spawned player object for client {clientId}");
-        });
-        
-        Debug.Log($"Spawned player object for client {clientId}");
-    }
-    
-    public GameObject CreateObject(string name, string spriteName, EntityType entityType, ulong clientId=0, System.Action<GameObject> afterInstantiateAction = null)
-    {
         // Instantiate the character prefab
-        GameObject newObject = Instantiate(entityType == EntityType.Player ? playerPrefab : testPrefab);
-        newObject.name = name;                                      // Set the object name
-        newObject.transform.position = new Vector3(0, 0, 0);        // choose object location
-        newObject.tag = entityType.ToString();                      // Set tag
+        Debug.Log($"Creating {name}, sprite {spriteName}, {entityType} object for client {clientId}");
+        GameObject obj = Instantiate(entityType == EntityType.Player ? playerPrefab : testPrefab);
+        
+        // Network spawning
+        NetworkObject networkObject = obj.GetComponent<NetworkObject>();
+        Debug.Log($"Spawning player for client {clientId}");
+        networkObject.SpawnWithOwnership(clientId); // Assigns the player object to the specific client
+        Debug.Log($"Spawned Player '{spriteName}' for client {clientId}");
+
+        // Initialize details
+        InitializeNetworkObject(networkObject, name, spriteName, entityType); // initialize on server
+        InitializeNetworkObjectClientRpc(networkObject.NetworkObjectId, name, spriteName, entityType); // initialize on clients
+    }
+
+    public void InitializeNetworkObject(NetworkObject networkObject, string name, string spriteName, EntityType entityType)
+    {
+        // Set common object properties
+        GameObject obj = networkObject.gameObject;
+        obj.name = name;                                      // Set the object name
+        obj.transform.position = new Vector3(0, 0, 0);        // choose object location
+        obj.tag = entityType.ToString();                      // Set tag
 
         // Handle chib objects
-        ChibSprite sprite = newObject.GetComponent<ChibSprite>();
+        ChibSprite sprite = obj.GetComponent<ChibSprite>();
+        Debug.Log($"Setting sprite to {spriteName} via {sprite}");
         if(sprite != null) sprite.SetSprite(spriteName);            // Set sprite
-        
-        // Execute passed function before parenting, e.g. network spawning
-        afterInstantiateAction?.Invoke(newObject);
-        
+        Debug.Log($"Set sprite to {spriteName} via {sprite}");
+
         // Add to objects container (after network spawning)
-        newObject.transform.parent = transform;
-        
-        return newObject;
+        obj.transform.parent = transform;
+    }
+
+    [ClientRpc]
+    private void InitializeNetworkObjectClientRpc(ulong networkObjectId, string name, string spriteName, EntityType entityType)
+    {
+        NetworkObject networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        if (networkObject != null)
+        {
+            InitializeNetworkObject(networkObject, name, spriteName, entityType);
+        }
     }
 }

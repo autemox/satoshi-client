@@ -1,7 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 
-public class ChibMoveRemote : MonoBehaviour
+public class ChibMoveRemote : NetworkBehaviour
 {
     [SerializeField] private float arrivalDistance = 0.1f; // When to stop moving
     
@@ -15,6 +15,18 @@ public class ChibMoveRemote : MonoBehaviour
         if(movement == null) Debug.LogError("Movement component not found.");
     }
     
+    public override void OnNetworkSpawn()
+    {
+        // check if you are the owner of this object
+        if (IsOwner)
+        {
+            Debug.Log("I am the owner of "+ gameObject.name+" so I will disable ChibMoveRemote");
+            enabled = false;
+        }
+
+        base.OnNetworkSpawn();
+    }
+
     private void Update() 
     {
         if (movement.IsOwner) return;
@@ -27,7 +39,7 @@ public class ChibMoveRemote : MonoBehaviour
         if (distance > arrivalDistance) {
             
             // move toward position actual
-            //movement.SetMovementDirection(moveDirection.normalized);
+            movement.SetMovementDirection(moveDirection.normalized);
         } 
         else 
         {

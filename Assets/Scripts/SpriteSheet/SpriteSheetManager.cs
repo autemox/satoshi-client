@@ -117,7 +117,7 @@ public class SpriteSheetManager : MonoBehaviour
         if (SpriteSheetCache.TryGetValue(name, out SpriteSheetAsset asset))
             return asset.sprites;
             
-        Debug.LogWarning($"SpriteSheet {name} not found in cache");
+        Debug.LogWarning($"SpriteSheet {name} not found in cache (length: {SpriteSheetCache.Count}) Cache: {string.Join(", ", SpriteSheetCache.Keys)}");
         return null;
     }
 

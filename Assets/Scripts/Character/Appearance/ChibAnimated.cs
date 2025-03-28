@@ -53,11 +53,6 @@ public class ChibAnimated : ChibSprite, IAnimated
         base.Awake();
     }
 
-    protected override void Start() 
-    {
-        base.Start();
-    }
-    
     protected override void Update()
     {
         // Handle V key for debugging
@@ -134,7 +129,7 @@ public class ChibAnimated : ChibSprite, IAnimated
         // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-            if (direction.x > 0) SetAnimation(Pose.StandRight);
+            if (direction.x < 0) SetAnimation(Pose.StandRight);
             else SetAnimation(Pose.StandLeft);
         }
         else
@@ -149,7 +144,7 @@ public class ChibAnimated : ChibSprite, IAnimated
         // Determine closest cardinal direction
         if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)) 
         {
-            if (direction.x > 0) SetAnimation(Pose.FallRight);
+            if (direction.x < 0) SetAnimation(Pose.FallRight);
             else SetAnimation(Pose.FallLeft);
         }
         else

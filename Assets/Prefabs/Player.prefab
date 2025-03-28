@@ -113,9 +113,10 @@ GameObject:
   - component: {fileID: 430627895457454881}
   - component: {fileID: -5625879288621732216}
   - component: {fileID: 6193210830758604446}
-  - component: {fileID: 5213180239727464224}
   - component: {fileID: 3283610324876660537}
   - component: {fileID: 5432226385671401622}
+  - component: {fileID: 5213180239727464224}
+  - component: {fileID: 7233796520456431985}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -220,19 +221,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &5213180239727464224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9004007857767497172}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b4cf9c83a9254b558a4ceec7d3daa66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &3283610324876660537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,9 +234,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  MOVE_SPEED: 5
+  MOVE_SPEED: 10
   ROTATION_SPEED: 10
-  JUMP_FORCE: 5
+  JUMP_FORCE: 7
   GRAVITY: -9.81
   Position:
     m_InternalValue: {x: 0, y: 0, z: 0}
@@ -264,7 +252,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0487b8254ea42baa66bbe0b8d9cd87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   billboardObject: {fileID: 7495498118221459846}
   currentAnimation: 0
   frameRate: 6
   animationEnabled: 1
+--- !u!114 &5213180239727464224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004007857767497172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b4cf9c83a9254b558a4ceec7d3daa66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &7233796520456431985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004007857767497172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d34a15b3bb445f887b8c1a23bee612, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arrivalDistance: 0.1

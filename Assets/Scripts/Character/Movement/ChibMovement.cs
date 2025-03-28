@@ -56,12 +56,6 @@ public class ChibMovement : NetworkBehaviour, IMovement
         // Combine with vertical velocity for complete movement
         Vector3 finalMovement = new Vector3(horizontalMovement.x, velocity.y * Time.fixedDeltaTime, horizontalMovement.z);
         
-        // once a second suing ticks and %
-        if (Time.frameCount % 60 == 0)
-        {
-            Debug.Log($"Movement: {moveDirection} Horizontal: {horizontalMovement} Final: {finalMovement} Velocity: {velocity} IsGrounded: {isGrounded}");   
-        }
-
         // Apply movement (includes both horizontal and vertical)
         controller.Move(finalMovement);
         

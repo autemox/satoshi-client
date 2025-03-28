@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Unity.Netcode;
+using Unity.Collections;
 
-public class ChibSprite : MonoBehaviour
+public class ChibSprite : NetworkBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private string currentSpriteName = "red_sorceress";
+    private string currentSpriteName = "undefined";
     private int currentSpriteIndex = 9;
     [SerializeField] private GameObject billboardObject;
     
@@ -20,22 +22,12 @@ public class ChibSprite : MonoBehaviour
         if(billboardObject == null) Debug.LogError("Billboard object not found.");
     }
 
-    protected virtual void Start()
-    {
-
-    }
-    
-    protected virtual void Update()
-    {
-        
-    }
-    
     public bool SetSprite(string spriteName)
     {
-        currentSpriteName = spriteName;
+        currentSpriteName = spriteName; // update current sprite name
         
         // Get the sprite array from SpriteSheetManager
-        Sprite[] sprites = SpriteSheetManager.instance.GetSpriteArray(spriteName);
+        Sprite[] sprites = SpriteSheetManager.instance.GetSpriteArray(spriteName.ToString());
         
         if (sprites != null && sprites.Length > 0)
         {
@@ -61,6 +53,11 @@ public class ChibSprite : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    protected virtual void Update() 
+    {
+
     }
 
     private void OnDrawGizmos()

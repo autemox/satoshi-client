@@ -1324,7 +1324,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 445510829}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -1850,7 +1850,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "TestUser\u200B"
+  m_text: "\u200B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2315,7 +2315,7 @@ PrefabInstance:
     - target: {fileID: 2371518196844177188, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2371518196844177188, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
@@ -2365,22 +2365,22 @@ PrefabInstance:
     - target: {fileID: 5435655838349677715, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.0013603074
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5435655838349677715, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0006345995
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5435655838349677715, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.8261805
+      value: -0.9967213
       objectReference: {fileID: 0}
     - target: {fileID: 5435655838349677715, guid: 042f8896a9ee24818b2d5a9830fca1d6,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.5634036
+      value: -0.0809117
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3910,7 +3910,7 @@ MonoBehaviour:
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
-  m_Text: TestUser
+  m_Text: 
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0

@@ -31,6 +31,18 @@ public class ChibMoveInput : NetworkBehaviour
         if(movement == null) Debug.LogError("Movement component not found.");
         if(cameraTransform == null) Debug.LogError("Camera transform not found.");
     }
+
+    public override void OnNetworkSpawn()
+    {
+        // check if you are the owner of this object
+        if (!IsOwner)
+        {
+            Debug.Log("I am not the owner of "+ gameObject.name+" so I will disable ChibMoveInput");
+            enabled = false;
+        }
+
+        base.OnNetworkSpawn();
+    }
     
     protected void FixedUpdate()
     {
